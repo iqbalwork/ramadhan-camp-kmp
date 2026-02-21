@@ -9,4 +9,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform) apply false
     alias(libs.plugins.kotlinMultiplatformLibrary) apply false
     alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.android.lint) apply false
+    alias(libs.plugins.kotlinParcelize) apply false
+    alias(libs.plugins.buildKonfig) apply false
 }

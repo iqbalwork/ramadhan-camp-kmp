@@ -16,7 +16,7 @@ kotlin {
 //            jvmTarget.set(JvmTarget.JVM_11)
 //        }
 //    }
-    
+
     androidLibrary {
         namespace = "com.iqbalwork.ramadhancamp"
         compileSdk = libs.versions.android.compileSdk.get().toInt()
@@ -29,7 +29,7 @@ kotlin {
             enable = true
         }
     }
-    
+
     listOf(
         iosArm64(),
         iosSimulatorArm64()
@@ -39,20 +39,20 @@ kotlin {
             isStatic = true
         }
     }
-    
+
     jvm()
-    
+
     js {
         browser()
         binaries.executable()
     }
-    
+
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
     }
-    
+
     sourceSets {
         androidMain.dependencies {
             api(libs.compose.uiToolingPreview)
@@ -67,6 +67,10 @@ kotlin {
             api(libs.compose.uiToolingPreview)
             api(libs.androidx.lifecycle.viewmodelCompose)
             api(libs.androidx.lifecycle.runtimeCompose)
+
+            implementation(projects.shared)
+            implementation(projects.core.data)
+            implementation(projects.core.uikit)
         }
         commonTest.dependencies {
             api(libs.kotlin.test)
