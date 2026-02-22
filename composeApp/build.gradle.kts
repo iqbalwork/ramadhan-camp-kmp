@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -56,7 +57,9 @@ kotlin {
     sourceSets {
         androidMain.dependencies {
             api(libs.compose.uiToolingPreview)
+            api(libs.compose.uiTooling)
             api(libs.androidx.activity.compose)
+            implementation(libs.koin.android)
         }
         commonMain.dependencies {
             api(libs.compose.runtime)
@@ -67,6 +70,17 @@ kotlin {
             api(libs.compose.uiToolingPreview)
             api(libs.androidx.lifecycle.viewmodelCompose)
             api(libs.androidx.lifecycle.runtimeCompose)
+
+            // Navigation
+            implementation(libs.navigation3.ui)
+            implementation(libs.navigation3.material3.adaptiveNavigation3)
+            implementation(libs.navigation3.lifecycle.viewmodelNavigation3)
+         /*   implementation(libs.navigation3.browser)*/
+
+            // DI
+            implementation(project.dependencies.platform(libs.koin.bom))
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose)
 
             implementation(projects.shared)
             implementation(projects.core.data)
