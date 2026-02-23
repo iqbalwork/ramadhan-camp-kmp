@@ -10,7 +10,11 @@ import org.koin.core.context.startKoin
 import org.koin.core.error.KoinApplicationAlreadyStartedException
 
 fun initKoin() {
-    startKoin {
-        modules(navigationModule, homeModule, prayModule, quranModule, qiblaModule, bookmarkModule)
+    try {
+        startKoin {
+            modules(navigationModule, homeModule, prayModule, quranModule, qiblaModule, bookmarkModule)
+        }
+    } catch (_: KoinApplicationAlreadyStartedException) {
+        // Already started (e.g. iOS MainViewController called twice) — skip
     }
 }
