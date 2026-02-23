@@ -16,7 +16,7 @@ import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun HomeDetailScreen(viewModel: HomeViewModel = koinViewModel()) {
+fun HomeSubDetailScreen(viewModel: HomeViewModel = koinViewModel()) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -24,13 +24,13 @@ fun HomeDetailScreen(viewModel: HomeViewModel = koinViewModel()) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Text("Home Detail", style = MaterialTheme.typography.headlineMedium)
-        DemoSection("In-Tab") {
-            DemoButton("Push SubDetail") { viewModel.navigateToSubDetail() }
+        Text("Home SubDetail", style = MaterialTheme.typography.headlineMedium)
+        DemoSection("Back to Root") {
+            DemoButton("Back to Home Main")              { viewModel.backToMain() }
+            DemoButton("Back to Home Main with Result")  { viewModel.backToMainWithResult() }
         }
         DemoSection("Back") {
-            DemoButton("Back")              { viewModel.back() }
-            DemoButton("Back with Result")  { viewModel.backWithResult() }
+            DemoButton("Back one step") { viewModel.back() }
         }
     }
 }
