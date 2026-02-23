@@ -1,8 +1,8 @@
 package com.iqbalwork.ramadhancamp.feature.home
 
-import androidx.navigation3.runtime.EntryProviderBuilder
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import androidx.navigation3.runtime.entry
 import com.iqbalwork.ramadhancamp.feature.home.presentation.HomeDetailScreen
 import com.iqbalwork.ramadhancamp.feature.home.presentation.HomeMainScreen
 import com.iqbalwork.ramadhancamp.feature.home.presentation.HomeSheetScreen
@@ -12,7 +12,8 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationControll
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 
-fun EntryProviderBuilder<NavKey>.homeTabEntries(nav: AppNavigationController) {
+@OptIn(ExperimentalMaterial3Api::class)
+fun EntryProviderScope<NavKey>.homeTabEntries(nav: AppNavigationController) {
     entry<TabDestination.HomeMain>      { HomeMainScreen() }
     entry<TabDestination.HomeDetail>    { HomeDetailScreen() }
     entry<TabDestination.HomeSubDetail> { HomeSubDetailScreen() }
