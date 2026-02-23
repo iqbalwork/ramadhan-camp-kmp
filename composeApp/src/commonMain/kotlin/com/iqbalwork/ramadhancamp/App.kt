@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.iqbalwork.ramadhancamp.core.domain.model.StartScreen
 import com.iqbalwork.ramadhancamp.core.presentation.mapper.toRootDestination
+import com.iqbalwork.ramadhancamp.feature.auth.presentation.AuthScreen
 import com.iqbalwork.ramadhancamp.feature.main.MainScreen
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationControllerHolder
 import com.iqbalwork.ramadhancamp.shared.common.navigation.ResultNavigationRepository
@@ -41,7 +42,7 @@ fun App(
             transitionSpec = { slideInHorizontally { it } togetherWith slideOutHorizontally { -it } },
             popTransitionSpec = { slideInHorizontally { -it } togetherWith slideOutHorizontally { it } },
             entryProvider = entryProvider {
-                entry<RootDestination.Auth> { /* AuthScreen() — placeholder */ }
+                entry<RootDestination.Auth> { AuthScreen() }
                 entry<RootDestination.Main> { MainScreen(navController) }
             },
         )
