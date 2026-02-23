@@ -42,4 +42,5 @@ class ResultNavigationRepository(
         resultsFlow.remove(key)
     }
 }
+
 data class TextResult(val text: String) : NavigationResultData
