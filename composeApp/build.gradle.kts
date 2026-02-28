@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+    alias(libs.plugins.kotlinx.serialization)
 }
 
 kotlin {
@@ -70,6 +71,11 @@ kotlin {
             api(libs.androidx.lifecycle.runtimeCompose)
             implementation(libs.constraintlayout.compose.multiplatform)
             implementation(libs.material.icons.extended)
+
+            // Navigation 3
+            implementation(libs.navigation3.ui)
+            implementation(libs.navigation3.material3.adaptiveNavigation3)
+            implementation(libs.navigation3.lifecycle.viewmodelNavigation3)
 
             implementation(projects.shared)
             implementation(projects.core.data)
