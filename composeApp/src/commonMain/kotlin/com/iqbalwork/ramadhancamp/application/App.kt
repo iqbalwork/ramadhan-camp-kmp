@@ -27,9 +27,10 @@ import com.iqbalwork.ramadhancamp.presentation.quran.QuranScreen
 @Preview
 fun App() {
     MaterialTheme {
-        val backStack: MutableList<BottomNavRoute> = rememberSerializable(serializer = SnapshotStateListSerializer()) {
-            mutableStateListOf(HomeRoute)
-        }
+        val backStack: MutableList<BottomNavRoute> =
+            rememberSerializable(serializer = SnapshotStateListSerializer()) {
+                mutableStateListOf(HomeRoute)
+            }
 
         Scaffold(
             bottomBar = {
@@ -39,30 +40,29 @@ fun App() {
                 )
             }
         ) { paddingValues ->
-            Box(modifier = Modifier) {
-                NavDisplay(
-                    backStack = backStack,
-                    onBack = {
-                        if (backStack.size > 1) {
-                            backStack.removeAt(backStack.size - 1)
-                        }
-                    },
-                    entryProvider = entryProvider {
-                        entry<HomeRoute> {
-                            HomeScreen()
-                        }
-                        entry<QuranRoute> {
-                            QuranScreen()
-                        }
-                        entry<QiblaRoute> {
-                            QiblaScreen()
-                        }
-                        entry<BookmarkRoute> {
-                            BookmarkScreen()
-                        }
+            NavDisplay(
+                modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+                backStack = backStack,
+                onBack = {
+                    if (backStack.size > 1) {
+                        backStack.removeAt(backStack.size - 1)
                     }
-                )
-            }
+                },
+                entryProvider = entryProvider {
+                    entry<HomeRoute> {
+                        HomeScreen()
+                    }
+                    entry<QuranRoute> {
+                        QuranScreen()
+                    }
+                    entry<QiblaRoute> {
+                        QiblaScreen()
+                    }
+                    entry<BookmarkRoute> {
+                        BookmarkScreen()
+                    }
+                }
+            )
         }
     }
 }
