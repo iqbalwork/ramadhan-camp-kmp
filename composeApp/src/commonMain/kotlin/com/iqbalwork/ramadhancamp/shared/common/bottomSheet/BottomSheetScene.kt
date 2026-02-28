@@ -52,29 +52,7 @@ internal class BottomSheetScene<T : Any>(
             onDismissRequest = onBack,
             properties = modalBottomSheetProperties,
         ) {
-            Column(
-                Modifier
-                    .padding(WindowInsets.statusBars.asPaddingValues())
-                    .fillMaxWidth()
-            ) {
-                Spacer(
-                    modifier = Modifier
-                        .size(width = 36.dp, height = 5.dp)
-                        .background(
-                            color = Color.Black,
-                            RoundedCornerShape(3.dp)
-                        )
-                        .align(Alignment.CenterHorizontally)
-                )
-                Box(
-                    modifier = Modifier
-                        .padding(top = 6.dp)
-                        .fillMaxWidth()
-                        .clip(RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)),
-                ) {
-                    entry.Content()
-                }
-            }
+            entry.Content()
         }
     }
 }

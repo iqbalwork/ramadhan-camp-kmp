@@ -16,6 +16,7 @@ data class RamadhanColorScheme(
     val accentEmerald: Color,
     val accentMint: Color,
     val accentTeal: Color,
+    val accentGold: Color,
     // Text
     val textPrimary: Color,
     val textSecondary: Color,
@@ -29,6 +30,9 @@ data class RamadhanColorScheme(
     val colorDanger: Color,
     val colorSuccess: Color,
     val colorInfo: Color,
+    // Category
+    val categoryPurple: Color,
+    val categoryAmber: Color,
 )
 
 internal val DarkColorScheme = RamadhanColorScheme(
@@ -43,6 +47,7 @@ internal val DarkColorScheme = RamadhanColorScheme(
     accentEmerald = accentEmerald,
     accentMint = accentMint,
     accentTeal = accentTeal,
+    accentGold = accentGold,
     textPrimary = textPrimary,
     textSecondary = textSecondary,
     textTertiary = textTertiary,
@@ -53,6 +58,8 @@ internal val DarkColorScheme = RamadhanColorScheme(
     colorDanger = colorDanger,
     colorSuccess = colorSuccess,
     colorInfo = colorInfo,
+    categoryPurple = categoryPurple,
+    categoryAmber = categoryAmber,
 )
 
 internal val LightColorScheme = RamadhanColorScheme(
@@ -67,9 +74,10 @@ internal val LightColorScheme = RamadhanColorScheme(
     accentEmerald = accentEmerald,
     accentMint = accentMint,
     accentTeal = accentTeal,
+    accentGold = accentGold,
     textPrimary = textOnLight,
-    textSecondary = Color(0xFF162E26).copy(alpha = 0.75f),
-    textTertiary = Color(0xFF162E26).copy(alpha = 0.50f),
+    textSecondary = Color(0xFF1A2E28).copy(alpha = 0.75f),
+    textTertiary = Color(0xFF1A2E28).copy(alpha = 0.50f),
     textMuted = textMuted,
     textOnLight = textOnLight,
     divider = borderLight,
@@ -77,6 +85,8 @@ internal val LightColorScheme = RamadhanColorScheme(
     colorDanger = colorDanger,
     colorSuccess = colorSuccess,
     colorInfo = colorInfo,
+    categoryPurple = categoryPurple,
+    categoryAmber = categoryAmber,
 )
 
 internal val NotSetColorScheme = LightColorScheme.copy()
