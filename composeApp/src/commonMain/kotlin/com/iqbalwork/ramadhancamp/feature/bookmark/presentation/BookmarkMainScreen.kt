@@ -13,12 +13,14 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoButton
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun BookmarkMainScreen(viewModel: BookmarkViewModel = koinViewModel()) {
+fun BookmarkMainScreen() {
+    val viewModel: BookmarkViewModel = rememberViewModel()
     val lastResult by viewModel.lastResult.collectAsState()
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),

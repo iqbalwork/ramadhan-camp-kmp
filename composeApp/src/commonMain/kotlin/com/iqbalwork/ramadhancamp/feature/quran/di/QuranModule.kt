@@ -5,5 +5,5 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val quranModule = module {
-    viewModel { QuranViewModel(get()) }
+    viewModel { params -> QuranViewModel(params.get()) }
 }

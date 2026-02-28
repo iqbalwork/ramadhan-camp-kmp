@@ -2,6 +2,7 @@ package com.iqbalwork.ramadhancamp.shared.common.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -42,7 +43,7 @@ class AppNavigationController(
     // ─── In-tab navigation ───────────────────────────────────────────────────
 
     override fun navigateToInsideTab(dest: TabDestination, withReplace: Boolean) {
-        val stack = tabBackStacks[currentTab.value].also { log { "there is a backstack" } } ?: return
+        val stack = tabBackStacks[currentTab.value] ?: return
         if (withReplace) {
             if (stack.isNotEmpty()) stack[stack.lastIndex] = dest
             else stack.add(dest)
@@ -152,7 +153,7 @@ fun rememberAppNavigationController(
     val qiblaBackStack    = rememberNavBackStack(appSavedStateConfig, TabDestination.QiblaMain    as NavKey)
     val bookmarkBackStack = rememberNavBackStack(appSavedStateConfig, TabDestination.BookmarkMain as NavKey)
 
-    val tabBackStacks = remember {
+    val tabBackStacks = rememberSaveable {
         mapOf(
             AppTab.Home     to homeBackStack,
             AppTab.Pray     to prayBackStack,
@@ -170,4 +171,8 @@ fun rememberAppNavigationController(
             resultRepository = resultRepository,
         )
     }
+}
+
+val LocalAppNavController = compositionLocalOf<AppNavigationController> {
+    error("AppNavigationController not provided")
 }

@@ -11,12 +11,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoButton
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
-fun QuranDetailScreen(viewModel: QuranViewModel = koinViewModel()) {
+fun QuranDetailScreen() {
+    val viewModel: QuranViewModel = rememberViewModel()
     Column(
         modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),

@@ -5,5 +5,5 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val bookmarkModule = module {
-    viewModel { BookmarkViewModel(get()) }
+    viewModel { params -> BookmarkViewModel(params.get()) }
 }

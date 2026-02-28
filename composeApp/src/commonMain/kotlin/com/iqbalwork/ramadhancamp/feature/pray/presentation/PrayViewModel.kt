@@ -2,7 +2,7 @@ package com.iqbalwork.ramadhancamp.feature.pray.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationControllerHolder
+import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class PrayViewModel(
-    private val navHolder: AppNavigationControllerHolder,
+    private val navController: AppNavigationController,
 ) : ViewModel() {
 
     companion object { const val RESULT_KEY = "pray_result" }
@@ -24,7 +24,7 @@ class PrayViewModel(
 
     init {
         viewModelScope.launch {
-            navHolder.get().subscribeToResult(RESULT_KEY).collect { result ->
+            navController.subscribeToResult(RESULT_KEY).collect { result ->
                 _lastResult.value = when (result) {
                     is NavigationResult.Success -> "✓ ${(result.value as? TextResult)?.text}"
                     is NavigationResult.Cancel  -> "✗ Cancelled"
@@ -33,19 +33,19 @@ class PrayViewModel(
         }
     }
 
-    fun navigateToDetail()  = navHolder.get().navigateToInsideTab(TabDestination.PrayDetail)
-    fun replaceWithDetail() = navHolder.get().navigateToInsideTab(TabDestination.PrayDetail, withReplace = true)
-    fun switchToQuran()     = navHolder.get().switchTab(AppTab.Quran)
-    fun showPraySheet()     = navHolder.get().showDialog(DialogDestination.PraySheet)
+    fun navigateToDetail()  = navController.navigateToInsideTab(TabDestination.PrayDetail)
+    fun replaceWithDetail() = navController.navigateToInsideTab(TabDestination.PrayDetail, withReplace = true)
+    fun switchToQuran()     = navController.switchTab(AppTab.Quran)
+    fun showPraySheet()     = navController.showDialog(DialogDestination.PraySheet)
 
-    fun navigateToSubDetail() = navHolder.get().navigateToInsideTab(TabDestination.PraySubDetail)
-    fun back()                = navHolder.get().back()
-    fun backWithResult()      = navHolder.get().back(
+    fun navigateToSubDetail() = navController.navigateToInsideTab(TabDestination.PraySubDetail)
+    fun back()                = navController.back()
+    fun backWithResult()      = navController.back(
         NavigationResult.Success(RESULT_KEY, TextResult("From PrayDetail"))
     )
 
-    fun backToMain() = navHolder.get().backToScreen(TabDestination.PrayMain)
-    fun backToMainWithResult() = navHolder.get().backToScreen(
+    fun backToMain() = navController.backToScreen(TabDestination.PrayMain)
+    fun backToMainWithResult() = navController.backToScreen(
         key = TabDestination.PrayMain,
         navigationResult = NavigationResult.Success(RESULT_KEY, TextResult("From PraySubDetail")),
     )

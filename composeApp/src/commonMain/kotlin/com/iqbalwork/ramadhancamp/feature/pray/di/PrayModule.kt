@@ -5,5 +5,5 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val prayModule = module {
-    viewModel { PrayViewModel(get()) }
+    viewModel { params -> PrayViewModel(params.get()) }
 }

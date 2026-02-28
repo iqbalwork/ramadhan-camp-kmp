@@ -31,10 +31,12 @@ import com.iqbalwork.ramadhancamp.feature.quran.quranTabEntries
 import com.iqbalwork.ramadhancamp.shared.common.bottomSheet.BottomSheetSceneStrategy
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppTab
+import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalAppNavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(navController: AppNavigationController) {
+fun MainScreen() {
+    val navController = LocalAppNavController.current
     val currentTab by navController.currentTab
     val bottomSheetStrategy = remember(navController) { BottomSheetSceneStrategy<NavKey>(navController) }
 

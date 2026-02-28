@@ -2,7 +2,7 @@ package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationControllerHolder
+import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class QuranViewModel(
-    private val navHolder: AppNavigationControllerHolder,
+    private val navController: AppNavigationController,
 ) : ViewModel() {
 
     companion object { const val RESULT_KEY = "quran_result" }
@@ -24,7 +24,7 @@ class QuranViewModel(
 
     init {
         viewModelScope.launch {
-            navHolder.get().subscribeToResult(RESULT_KEY).collect { result ->
+          navController.subscribeToResult(RESULT_KEY).collect { result ->
                 _lastResult.value = when (result) {
                     is NavigationResult.Success -> "✓ ${(result.value as? TextResult)?.text}"
                     is NavigationResult.Cancel  -> "✗ Cancelled"
@@ -33,19 +33,19 @@ class QuranViewModel(
         }
     }
 
-    fun navigateToDetail()  = navHolder.get().navigateToInsideTab(TabDestination.QuranDetail)
-    fun replaceWithDetail() = navHolder.get().navigateToInsideTab(TabDestination.QuranDetail, withReplace = true)
-    fun switchToQibla()     = navHolder.get().switchTab(AppTab.Qibla)
-    fun showQuranSheet()    = navHolder.get().showDialog(DialogDestination.QuranSheet)
+    fun navigateToDetail()  = navController.navigateToInsideTab(TabDestination.QuranDetail)
+    fun replaceWithDetail() = navController.navigateToInsideTab(TabDestination.QuranDetail, withReplace = true)
+    fun switchToQibla()     = navController.switchTab(AppTab.Qibla)
+    fun showQuranSheet()    = navController.showDialog(DialogDestination.QuranSheet)
 
-    fun navigateToSubDetail() = navHolder.get().navigateToInsideTab(TabDestination.QuranSubDetail)
-    fun back()                = navHolder.get().back()
-    fun backWithResult()      = navHolder.get().back(
+    fun navigateToSubDetail() = navController.navigateToInsideTab(TabDestination.QuranSubDetail)
+    fun back()                = navController.back()
+    fun backWithResult()      = navController.back(
         NavigationResult.Success(RESULT_KEY, TextResult("From QuranDetail"))
     )
 
-    fun backToMain() = navHolder.get().backToScreen(TabDestination.QuranMain)
-    fun backToMainWithResult() = navHolder.get().backToScreen(
+    fun backToMain() = navController.backToScreen(TabDestination.QuranMain)
+    fun backToMainWithResult() = navController.backToScreen(
         key = TabDestination.QuranMain,
         navigationResult = NavigationResult.Success(RESULT_KEY, TextResult("From QuranSubDetail")),
     )

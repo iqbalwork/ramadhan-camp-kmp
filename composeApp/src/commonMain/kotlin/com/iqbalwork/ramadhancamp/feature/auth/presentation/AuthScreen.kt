@@ -11,7 +11,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationControllerHolder
+import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationController
+import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalAppNavController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.RootDestination
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoButton
 import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
@@ -19,7 +20,7 @@ import org.koin.compose.koinInject
 
 @Composable
 fun AuthScreen() {
-    val navHolder: AppNavigationControllerHolder = koinInject()
+    val navController: AppNavigationController = LocalAppNavController.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -34,13 +35,13 @@ fun AuthScreen() {
         )
         DemoSection("Root Navigation") {
             DemoButton("Navigate to Main (push)") {
-                navHolder.get().navigateTo(RootDestination.Main())
+               navController.navigateTo(RootDestination.Main())
             }
             DemoButton("Navigate to Main (replace)") {
-                navHolder.get().navigateTo(RootDestination.Main(), withReplace = true)
+               navController.navigateTo(RootDestination.Main(), withReplace = true)
             }
             DemoButton("Start New Flow → Main") {
-                navHolder.get().startNewFlow(RootDestination.Main())
+               navController.startNewFlow(RootDestination.Main())
             }
         }
     }
