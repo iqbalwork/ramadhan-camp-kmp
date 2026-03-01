@@ -50,6 +50,16 @@ kotlin {
     }
 
     sourceSets {
+        val mobileMain by creating {
+            dependsOn(commonMain.get())
+        }
+        androidMain.get().dependsOn(mobileMain)
+        nativeMain.get().dependsOn(mobileMain)
+
+        mobileMain.dependencies {
+            implementation(libs.compass.geocoder.mobile)
+        }
+
         androidMain.dependencies {
             api(libs.compose.uiToolingPreview)
             api(libs.compose.uiTooling)
@@ -93,6 +103,17 @@ kotlin {
             implementation(projects.shared)
             implementation(projects.core.data)
             implementation(projects.core.uikit)
+
+            // Geocoding
+            implementation(libs.compass.geocoder)
+            implementation(libs.compass.geocoder.web.googlemaps)
+
+            // Geolocation
+            implementation(libs.compass.geolocation)
+            implementation(libs.compass.geolocation.mobile)
+
+            // UI
+            implementation(libs.material.icons.extended)
         }
         commonTest.dependencies {
             api(libs.kotlin.test)

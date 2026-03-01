@@ -50,6 +50,8 @@ turbine = "1.2.1"
 kotlinStdlib = "2.3.0"
 runner = "1.7.0"
 core = "1.7.0"
+# Geocoding and Geolocation
+compass = "3.0.1"
 
 [libraries]
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
@@ -124,6 +126,17 @@ multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-sett
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+
+# Geocoding
+compass-geocoder = { module = "dev.jordond.compass:geocoder", version.ref = "compass" }
+compass-geocoder-mobile = { module = "dev.jordond.compass:geocoder-mobile", version.ref = "compass" }
+compass-geocoder-web = { module = "dev.jordond.compass:geocoder-web", version.ref = "compass" }
+compass-geocoder-web-googlemaps = { module = "dev.jordond.compass:geocoder-googlemaps", version.ref = "compass" }
+compass-geocoder-web-mapbox = { module = "dev.jordond.compass:geocoder-mapbox", version.ref = "compass" }
+
+# Geolocation
+compass-geolocation = { module = "dev.jordond.compass:geolocation", version.ref = "compass" }
+compass-geolocation-mobile = { module = "dev.jordond.compass:geolocation-mobile", version.ref = "compass" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }

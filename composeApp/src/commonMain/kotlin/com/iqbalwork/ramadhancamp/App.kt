@@ -6,7 +6,6 @@ import androidx.compose.animation.togetherWith
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -14,7 +13,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.iqbalwork.ramadhancamp.core.domain.model.StartScreen
 import com.iqbalwork.ramadhancamp.core.presentation.mapper.toRootDestination
 import com.iqbalwork.ramadhancamp.feature.auth.presentation.AuthScreen
-import com.iqbalwork.ramadhancamp.feature.main.MainScreen
+import com.iqbalwork.ramadhancamp.feature.main.presentation.MainScreen
 import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalAppNavController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.ResultNavigationRepository
 import com.iqbalwork.ramadhancamp.shared.common.navigation.RootDestination

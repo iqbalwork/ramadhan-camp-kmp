@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.main
+package com.iqbalwork.ramadhancamp.feature.main.presentation
 
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
@@ -29,7 +29,6 @@ import com.iqbalwork.ramadhancamp.feature.pray.prayTabEntries
 import com.iqbalwork.ramadhancamp.feature.qibla.qiblaTabEntries
 import com.iqbalwork.ramadhancamp.feature.quran.quranTabEntries
 import com.iqbalwork.ramadhancamp.shared.common.bottomSheet.BottomSheetSceneStrategy
-import com.iqbalwork.ramadhancamp.shared.common.navigation.AppNavigationController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AppTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalAppNavController
 
