@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.commonMain
+import org.gradle.kotlin.dsl.get
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -50,16 +52,6 @@ kotlin {
     }
 
     sourceSets {
-        val mobileMain by creating {
-            dependsOn(commonMain.get())
-        }
-        androidMain.get().dependsOn(mobileMain)
-        nativeMain.get().dependsOn(mobileMain)
-
-        mobileMain.dependencies {
-            implementation(libs.compass.geocoder.mobile)
-            implementation(libs.compass.geolocation.mobile)
-        }
 
         androidMain.dependencies {
             api(libs.compose.uiToolingPreview)
@@ -69,6 +61,10 @@ kotlin {
 
             // Ktor
             implementation(libs.ktor.client.okhttp)
+
+            // geo
+            implementation(libs.compass.geocoder.mobile)
+            implementation(libs.compass.geolocation.mobile)
         }
         commonMain.dependencies {
             api(libs.compose.runtime)
@@ -113,6 +109,11 @@ kotlin {
 
             // UI
             implementation(libs.material.icons.extended)
+
+            // Settings Pref
+            implementation(libs.multiplatform.settings)
+            implementation(libs.multiplatform.settings.coroutines)
+
         }
         commonTest.dependencies {
             api(libs.kotlin.test)
@@ -122,6 +123,8 @@ kotlin {
             api(libs.kotlinx.coroutinesSwing)
         }
         nativeMain.dependencies {
+            implementation(libs.compass.geocoder.mobile)
+            implementation(libs.compass.geolocation.mobile)
             implementation(libs.ktor.client.darwin)
         }
         wasmJsMain.dependencies {
