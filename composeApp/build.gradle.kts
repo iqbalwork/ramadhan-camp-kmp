@@ -58,6 +58,7 @@ kotlin {
 
         mobileMain.dependencies {
             implementation(libs.compass.geocoder.mobile)
+            implementation(libs.compass.geolocation.mobile)
         }
 
         androidMain.dependencies {
@@ -106,11 +107,9 @@ kotlin {
 
             // Geocoding
             implementation(libs.compass.geocoder)
-            implementation(libs.compass.geocoder.web.googlemaps)
 
             // Geolocation
             implementation(libs.compass.geolocation)
-            implementation(libs.compass.geolocation.mobile)
 
             // UI
             implementation(libs.material.icons.extended)
@@ -124,6 +123,10 @@ kotlin {
         }
         nativeMain.dependencies {
             implementation(libs.ktor.client.darwin)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.compass.geocoder.web.googlemaps)
+            implementation(libs.compass.geocoder.web)
         }
     }
 }
