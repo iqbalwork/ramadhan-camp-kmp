@@ -5,7 +5,7 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ShalatJadwal(
+data class ShalatJadwalDto(
     @SerialName("ashar")
     val ashar: String,
     @SerialName("dhuha")

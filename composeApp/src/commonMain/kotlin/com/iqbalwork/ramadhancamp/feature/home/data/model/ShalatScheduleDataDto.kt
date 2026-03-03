@@ -11,7 +11,7 @@ data class ShalatScheduleDataDto(
     @SerialName("bulan_nama")
     val bulanNama: String,
     @SerialName("jadwal")
-    val jadwal: List<ShalatJadwal>,
+    val jadwal: List<ShalatJadwalDto>,
     @SerialName("kabkota")
     val kabkota: String,
     @SerialName("provinsi")

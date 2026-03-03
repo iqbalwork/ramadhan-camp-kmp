@@ -1,6 +1,7 @@
 package com.iqbalwork.ramadhancamp.shared.common.network
 
 import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
+import com.iqbalwork.ramadhancamp.shared.common.utils.serverErrorsCodes
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.network.sockets.ConnectTimeoutException
@@ -61,7 +62,7 @@ fun handleFailure(throwable: Throwable): Result<Nothing> {
     throwable.printStackTrace()
     val appError = when (throwable) {
         is ApiException -> {
-            if (throwable.httpCode == HttpStatusCode.InternalServerError.value && throwable.errorMsg.isEmpty()) {
+            if (throwable.httpCode in serverErrorsCodes && throwable.errorMsg.isEmpty()) {
                 AppError.UnexpectedError(
                     message = "",
                     cause = throwable

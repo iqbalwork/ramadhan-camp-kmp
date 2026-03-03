@@ -1,0 +1,10 @@
+<resources>
+    <string name="retry">Coba Lagi</string>
+
+    <string name="error_critical_title">Ada sesuatu yang rusak</string>
+    <string name="error_critical_message">Tunggu sebentar dan coba lagi</string>
+    <string name="error_critical_snack_bar">Ada sesuatu yang rusak. Tunggu sebentar dan coba lagi</string>
+    <string name="error_network_title">Ada yang tidak beresк</string>
+    <string name="error_network_message">Periksa internet atau coba lagi</string>
+    <string name="error_network_snack_bar">Ada yang tidak beres. Periksa internet atau coba lagi</string>
+</resources>
