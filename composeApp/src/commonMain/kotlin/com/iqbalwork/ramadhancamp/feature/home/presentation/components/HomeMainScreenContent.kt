@@ -4,9 +4,11 @@ import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEvent
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeState
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.ErrorEmptyState
@@ -30,8 +32,6 @@ fun HomeMainScreenContent(
     Box(
         modifier = modifier
             .background(RamadhanTheme.colors.bgPrimary)
-            .fillMaxSize()
-            .systemBarsPadding()
     ) {
         AnimatedContent(
             modifier = Modifier.fillMaxSize(),
@@ -52,7 +52,15 @@ fun HomeMainScreenContent(
                 AnimateContentState.Loading -> Loader(
                     modifier = Modifier.fillMaxSize()
                 )
-                AnimateContentState.Success -> TODO()
+                AnimateContentState.Success -> HomeMainSuccessContent(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .systemBarsPadding()
+                        .padding(horizontal = 24.dp)
+                        .padding(top = 12.dp)
+                    ,
+                    homeMainData = state.screenData,
+                )
             }
         }
     }

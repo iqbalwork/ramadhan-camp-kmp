@@ -10,6 +10,7 @@ internal val bgSurface = Color(0xFF064C39)
 internal val bgContent = Color(0xFFF1F5F9)
 internal val bgContentSecondary = Color(0xFFE2E8F0)
 internal val bgAccentLight = Color(0xFFD1FAE5)
+internal val bgSurfaceLight = Color(0xFF2D5E4F)
 
 // Accent / Brand
 internal val accentPrimary = Color(0xFF064C39)

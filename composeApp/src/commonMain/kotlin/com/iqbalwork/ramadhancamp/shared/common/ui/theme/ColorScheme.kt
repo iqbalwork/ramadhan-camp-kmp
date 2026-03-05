@@ -11,6 +11,7 @@ data class RamadhanColorScheme(
     val bgContent: Color,
     val bgContentSecondary: Color,
     val bgAccentLight: Color,
+    val bgSurfaceLight: Color,
     // Accent
     val accentPrimary: Color,
     val accentEmerald: Color,
@@ -60,6 +61,7 @@ internal val DarkColorScheme = RamadhanColorScheme(
     colorInfo = colorInfo,
     categoryPurple = categoryPurple,
     categoryAmber = categoryAmber,
+    bgSurfaceLight = bgSurfaceLight
 )
 
 internal val LightColorScheme = RamadhanColorScheme(
@@ -87,6 +89,7 @@ internal val LightColorScheme = RamadhanColorScheme(
     colorInfo = colorInfo,
     categoryPurple = categoryPurple,
     categoryAmber = categoryAmber,
+    bgSurfaceLight = bgSurfaceLight
 )
 
 internal val NotSetColorScheme = LightColorScheme.copy()

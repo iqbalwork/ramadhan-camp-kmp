@@ -17,4 +17,7 @@
 
     <string name="home_main_header_greeting">Assalamualaikum!</string>
 
+    <string name="next">Berikutnya</string>
+    <string name="remaining_time">SISA WAKTU</string>
+
 </resources>

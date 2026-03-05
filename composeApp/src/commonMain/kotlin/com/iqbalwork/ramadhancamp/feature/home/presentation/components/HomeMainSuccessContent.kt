@@ -3,6 +3,7 @@ package com.iqbalwork.ramadhancamp.feature.home.presentation.components
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -16,23 +17,24 @@ import ramadhancamp.composeapp.generated.resources.home_main_header_greeting
 @Composable
 fun HomeMainSuccessContent(
     homeMainData: HomeScreenUiModel,
-    action: (HomeEvent) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
-        modifier = modifier
-            .padding(horizontal = 24.dp)
-            .padding(top = 16.dp)
+    Column(
+        modifier = modifier,
     ) {
-        Column(
-            modifier = modifier.fillMaxSize(),
-        ) {
-            HomeMainHeader(
-                modifier = Modifier.padding(bottom = 24.dp),
-                greetingText = stringResource(Res.string.home_main_header_greeting),
-                city = homeMainData.city,
-                country = homeMainData.country,
-            )
-        }
+        HomeMainHeader(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            greetingText = stringResource(Res.string.home_main_header_greeting),
+            city = homeMainData.city,
+            country = homeMainData.country,
+        )
+        
+        CardNextPrayer(
+            modifier = Modifier.fillMaxWidth(),
+            prayerName = homeMainData.nextPrayerData.nextPrayerName,
+            prayerTime = homeMainData.nextPrayerData.nextPrayerTime,
+            date = " Selasa, 24 Sya'ban 1445 H",
+            remainingMinute = homeMainData.nextPrayerData.remainingMinutesToNextPrayer.toString()
+        )
     }
 }

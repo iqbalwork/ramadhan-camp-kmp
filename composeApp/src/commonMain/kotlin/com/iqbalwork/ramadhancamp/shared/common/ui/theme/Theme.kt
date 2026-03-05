@@ -20,7 +20,7 @@ fun RamadhanTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit,
 ) {
-    val colorScheme = if (darkTheme) DarkColorScheme else LightColorScheme
+    val colorScheme = if (darkTheme) DarkColorScheme else DarkColorScheme
     val typography = ramadhanTypography()
 
     CompositionLocalProvider(
