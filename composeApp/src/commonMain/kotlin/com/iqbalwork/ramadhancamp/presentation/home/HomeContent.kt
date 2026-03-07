@@ -15,9 +15,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.ChevronRight
-import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -25,15 +25,26 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import com.iqbalwork.ramadhancamp.ui.component.LocationLabel
+import com.iqbalwork.ramadhancamp.ui.component.TextSectionLabel
+import com.iqbalwork.ramadhancamp.ui.theme.ArabicTypography
+import com.iqbalwork.ramadhancamp.ui.theme.BackgroundItem
+import com.iqbalwork.ramadhancamp.ui.theme.PrimaryGreen
+import com.iqbalwork.ramadhancamp.ui.theme.RamadhanTheme
+import com.iqbalwork.ramadhancamp.ui.theme.RamadhanTypography
+import com.iqbalwork.ramadhancamp.ui.theme.SecondaryGreen
 import org.jetbrains.compose.resources.painterResource
 import ramadhancamp.composeapp.generated.resources.Res
 import ramadhancamp.composeapp.generated.resources.ic_book
+import ramadhancamp.composeapp.generated.resources.img_mosque
 
 /**
  * iqbalfauzi
@@ -43,18 +54,21 @@ import ramadhancamp.composeapp.generated.resources.ic_book
 @Composable
 fun HomeContent() {
     Scaffold(
-        modifier = Modifier.background(color = Color.LightGray)
+        modifier = Modifier,
+        containerColor = MaterialTheme.colorScheme.primary
     ) { paddingValues ->
         LazyColumn(
             modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 16.dp),
+                .fillMaxSize()
+                .padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             item {
-                HeaderItem(modifier = Modifier
-                    .padding(top = paddingValues.calculateTopPadding())
-                    .fillMaxWidth(), location = "Bandung, Jawa Barat")
+                HeaderItem(
+                    modifier = Modifier
+                        .padding(top = paddingValues.calculateTopPadding())
+                        .fillMaxWidth(), location = "Bandung, Jawa Barat"
+                )
             }
             item {
                 PrayTimeSection(modifier = Modifier.fillMaxWidth())
@@ -81,7 +95,7 @@ fun PopularSection(modifier: Modifier = Modifier) {
         modifier = modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(text = "Surat Populer")
+        TextSectionLabel(label = "Surat Populer")
         Column(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -133,15 +147,14 @@ data class SurahData(
 fun SurahItem(modifier: Modifier = Modifier, surahData: SurahData) {
     ConstraintLayout(
         modifier = modifier
-            .background(color = Color.DarkGray, shape = RoundedCornerShape(12.dp))
+            .background(color = BackgroundItem, shape = RoundedCornerShape(12.dp))
             .padding(16.dp)
     ) {
         val (numberRef, surahRef, arabicRef) = createRefs()
 
         Text(
             text = surahData.number.toString(),
-            fontSize = 14.sp,
-            color = Color.White,
+            style = RamadhanTypography.bodyMedium,
             modifier = Modifier.constrainAs(numberRef) {
                 linkTo(top = parent.top, bottom = parent.bottom)
                 start.linkTo(parent.start)
@@ -154,22 +167,17 @@ fun SurahItem(modifier: Modifier = Modifier, surahData: SurahData) {
         }) {
             Text(
                 text = surahData.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
+                style = RamadhanTypography.titleMedium
             )
             Text(
                 text = "${surahData.totalAyah} Ayah • ${surahData.location}",
-                fontSize = 12.sp,
-                fontWeight = FontWeight.Light,
-                color = Color.White
+                style = RamadhanTypography.bodySmall
             )
         }
 
         Text(
             text = surahData.arabicName,
-            fontSize = 28.sp,
-            color = Color.White,
+            style = ArabicTypography.titleLarge,
             modifier = Modifier.constrainAs(arabicRef) {
                 linkTo(top = parent.top, bottom = parent.bottom)
                 end.linkTo(parent.end)
@@ -180,44 +188,70 @@ fun SurahItem(modifier: Modifier = Modifier, surahData: SurahData) {
 
 @Composable
 fun PrayTimeSection(modifier: Modifier = Modifier) {
-    Card(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
+    val gradientColors = listOf(Color.Magenta, Color.Blue, Color.Cyan)
+
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(containerColor = SecondaryGreen)
+    ) {
+        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+            val (prayTimeRef, dateRef) = createRefs()
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.constrainAs(prayTimeRef) {
+                    top.linkTo(parent.top, 16.dp)
+                    start.linkTo(parent.start, 16.dp)
+                    end.linkTo(parent.end, 16.dp)
+                    width = Dimension.fillToConstraints
+                },
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(text = "Berikutnya", fontSize = 14.sp)
-                    Text(text = "Maghrib", fontSize = 20.sp, fontWeight = FontWeight.Bold)
-                    Text(text = "18:20", fontSize = 16.sp)
+                    Text(text = "Berikutnya", style = RamadhanTypography.bodySmall)
+                    Text(text = "Maghrib", style = RamadhanTypography.titleLarge)
+                    Text(text = "18:20", style = RamadhanTypography.titleMedium)
                 }
 
                 Column(
                     verticalArrangement = Arrangement.spacedBy(4.dp),
                 ) {
-                    Text(text = "Sisa Waktu", fontSize = 14.sp)
-                    Text(text = "45 Menit", fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Sisa Waktu", style = RamadhanTypography.bodySmall)
+                    Text(
+                        text = "45 Menit",
+                        style = RamadhanTypography.titleLarge.copy(fontSize = 18.sp)
+                    )
                 }
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
             Row(
                 modifier = Modifier.background(
-                    color = Color.LightGray,
+                    color = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(40.dp)
-                ).padding(horizontal = 16.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ).padding(horizontal = 16.dp, vertical = 8.dp).constrainAs(dateRef) {
+                    top.linkTo(prayTimeRef.bottom, 16.dp)
+                    bottom.linkTo(parent.bottom, 16.dp)
+                    start.linkTo(parent.start, 16.dp)
+                },
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     imageVector = Icons.Default.CalendarMonth,
                     contentDescription = null,
-                    tint = Color.Blue,
+                    tint = Color.White,
                 )
-                Text(text = "Selasa, 24 Sya'ban 1447H", fontSize = 12.sp)
+                Text(text = "Selasa, 24 Sya'ban 1447H", style = RamadhanTypography.bodySmall)
             }
+
+            Image(
+                painter = painterResource(Res.drawable.img_mosque),
+                contentDescription = null,
+                modifier = Modifier.alpha(0.25f).constrainAs(createRef()) {
+                    bottom.linkTo(parent.bottom, (-16).dp)
+                    end.linkTo(parent.end, (-16).dp)
+                }
+            )
         }
     }
 }
@@ -230,15 +264,16 @@ fun LastReadSection(modifier: Modifier = Modifier) {
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Text(text = "Terakhir dibaca")
-            Text(text = "Lihat semua", fontSize = 12.sp, fontWeight = FontWeight.Light)
+            TextSectionLabel(label = "Terakhir dibaca")
+            Text(text = "Lihat semua", style = RamadhanTypography.bodySmall)
         }
 
         ConstraintLayout(
             modifier = Modifier.fillMaxWidth()
-                .background(color = Color.LightGray, shape = RoundedCornerShape(12.dp))
+                .background(color = BackgroundItem, shape = RoundedCornerShape(12.dp))
                 .padding(16.dp)
         ) {
             val (iconRef, infoRef) = createRefs()
@@ -255,8 +290,8 @@ fun LastReadSection(modifier: Modifier = Modifier) {
                 linkTo(top = iconRef.top, bottom = iconRef.bottom)
                 start.linkTo(iconRef.end, margin = 16.dp)
             }) {
-                Text(text = "Terakhir dibaca")
-                Text(text = "Lihat semua", fontSize = 12.sp, fontWeight = FontWeight.Light)
+                Text(text = "Terakhir dibaca", style = RamadhanTypography.titleMedium)
+                Text(text = "Lihat semua", style = RamadhanTypography.bodySmall)
             }
 
             Icon(
@@ -274,17 +309,18 @@ fun LastReadSection(modifier: Modifier = Modifier) {
 fun SearchBarItem(modifier: Modifier = Modifier) {
     Row(
         modifier = modifier
-            .background(color = Color.LightGray, shape = RoundedCornerShape(12.dp))
+            .background(color = BackgroundItem, shape = RoundedCornerShape(12.dp))
             .padding(horizontal = 12.dp, vertical = 12.dp)
             .fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
             imageVector = Icons.Default.Search,
             contentDescription = null,
-            tint = Color.Blue
+            tint = Color.White
         )
-        Text(text = "Cari Ayat atau Surat...")
+        Text(text = "Cari Ayat atau Surat...", style = RamadhanTypography.bodyMedium)
     }
 }
 
@@ -293,27 +329,20 @@ fun HeaderItem(modifier: Modifier = Modifier, location: String) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.Start,
-        verticalArrangement = Arrangement.SpaceBetween
+        verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Text(text = "Assalammu'alaikum!")
-        Row(
-            modifier = Modifier,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            Icon(
-                imageVector = Icons.Default.LocationOn,
-                contentDescription = null,
-                tint = Color.Blue
-            )
-            Text(text = location)
-        }
+        Text(
+            text = "Assalammu'alaikum!",
+            style = RamadhanTypography.titleLarge
+        )
+        LocationLabel(modifier = Modifier, location = "Bandung, Jawa Barat")
     }
 }
 
 @Preview
 @Composable
 fun PreviewHomeContent() {
-    MaterialTheme {
+    RamadhanTheme(useDynamicColor = false) {
         HomeContent()
     }
 }

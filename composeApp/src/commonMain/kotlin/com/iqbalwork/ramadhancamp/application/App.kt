@@ -1,7 +1,6 @@
 package com.iqbalwork.ramadhancamp.application
 
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -22,11 +21,12 @@ import com.iqbalwork.ramadhancamp.presentation.bookmark.BookmarkScreen
 import com.iqbalwork.ramadhancamp.presentation.home.HomeScreen
 import com.iqbalwork.ramadhancamp.presentation.qibla.QiblaScreen
 import com.iqbalwork.ramadhancamp.presentation.quran.QuranScreen
+import com.iqbalwork.ramadhancamp.ui.theme.RamadhanTheme
 
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
+    RamadhanTheme {
         val backStack: MutableList<BottomNavRoute> =
             rememberSerializable(serializer = SnapshotStateListSerializer()) {
                 mutableStateListOf(HomeRoute)
