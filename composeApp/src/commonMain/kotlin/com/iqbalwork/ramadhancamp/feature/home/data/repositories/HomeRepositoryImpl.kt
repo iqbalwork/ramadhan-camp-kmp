@@ -9,36 +9,46 @@ import com.iqbalwork.ramadhancamp.feature.home.domain.model.NextPrayer
 import com.iqbalwork.ramadhancamp.feature.home.domain.repository.HomeRepository
 import com.iqbalwork.ramadhancamp.shared.common.utils.math.haversineDistanceKm
 import dev.jordond.compass.Coordinates
-import dev.jordond.compass.Place
 import dev.jordond.compass.Priority
 import dev.jordond.compass.geocoder.Geocoder
 import dev.jordond.compass.geolocation.Geolocator
 import dev.jordond.compass.geolocation.GeolocatorResult
-import io.github.aakira.napier.log
-import kotlinx.coroutines.channels.BufferOverflow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 import kotlin.time.Clock
 
 private const val MIN_DISTANCE_KM_FOR_CACHE = 50.0
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class HomeRepositoryImpl(
     private val geolocator: Geolocator,
     private val geocoder: Geocoder,
     private val pref: HomePreferences,
     private val homeRemoteDatasource: HomeRemoteDatasource,
 ): HomeRepository {
-    private val _nextPrayer = MutableSharedFlow<NextPrayer>(
-        replay = 1,
-        extraBufferCapacity = 1,
-        onBufferOverflow = BufferOverflow.DROP_OLDEST
-    )
-    override val nextPrayer = _nextPrayer.asSharedFlow()
+
+    private val scheduleFlow = MutableStateFlow<ShalatScheduleDto?>(null)
+
+    override val nextPrayer: Flow<NextPrayer> = scheduleFlow
+        .flatMapLatest { schedule ->
+            flow {
+                while (true) {
+                    val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
+                    schedule?.data?.jadwal
+                        ?.find { it.tanggal == now.day }
+                        ?.let { emit(it.nextPrayer(now)) }
+                    val secondsUntilNextMinute = 60 - now.second
+                    delay(secondsUntilNextMinute * 1000L)
+                }
+            }
+        }
 
     override val lastSurahRead: Flow<LastSurahRead?> = combine(
         flow = pref.surahName.flow,
@@ -49,14 +59,12 @@ class HomeRepositoryImpl(
         else null
     }
 
-    private var currentShalatSchedule: ShalatScheduleDto? = null
-
-    override suspend fun getCurrentLocation(): Result<GeolocatorResult> =
+    override suspend fun getCurrentCoordinate(): Result<GeolocatorResult> =
         runCatching {
             geolocator.current(Priority.HighAccuracy)
         }
 
-    override suspend fun getCurrentCityAndProvince(coordinates: Coordinates): Result<Triple<String, String, String>> = runCatching {
+    override suspend fun getCurrentPlace(coordinates: Coordinates): Result<Triple<String, String, String>> = runCatching {
         val lastLat = pref.lastLatitude
         val lastLng = pref.lastLongitude
         val distance = haversineDistanceKm(lastLat, lastLng, coordinates.latitude, coordinates.longitude)
@@ -88,28 +96,7 @@ class HomeRepositoryImpl(
         province: String,
         city: String
     ): Result<Unit> = runCatching {
-        currentShalatSchedule = homeRemoteDatasource.getShalatSchedule(province, city).getOrThrow()
-        log { "SHALAT SCHEDULE $currentShalatSchedule" }
-    }
-
-    override suspend fun observerNextPrayer() {
-        while (true) {
-            val now = Clock.System.now()
-            val nowLocal = now.toLocalDateTime(TimeZone.currentSystemDefault())
-
-            log { "SCHEDULE ${ currentShalatSchedule?.data?.jadwal
-                ?.find { it.tanggal == nowLocal.day }}" }
-
-            currentShalatSchedule?.data?.jadwal
-                ?.find { it.tanggal == nowLocal.day }
-                ?.let { today ->
-                    _nextPrayer.tryEmit(today.nextPrayer(nowLocal))
-                    log { "SHALAT  $today" }
-                }
-
-            val secondsUntilNextMinute = 60 - nowLocal.second
-            delay(secondsUntilNextMinute * 1000L)
-        }
+        scheduleFlow.value = homeRemoteDatasource.getShalatSchedule(province, city).getOrThrow()
     }
 
     override suspend fun saveLastReadSurah(surah: LastSurahRead) {

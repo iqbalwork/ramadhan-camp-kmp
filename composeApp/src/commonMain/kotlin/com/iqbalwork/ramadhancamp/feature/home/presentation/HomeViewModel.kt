@@ -13,9 +13,7 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
-import com.iqbalwork.ramadhancamp.shared.common.utils.toAppError
 import dev.jordond.compass.geolocation.GeolocatorResult
-import io.github.aakira.napier.log
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -36,22 +34,19 @@ class HomeViewModel(
     init {
         viewModelScope.launch {
             initData()
-            launch { homeRepository.observerNextPrayer() }
             launch { subscribeNextPrayer() }
-            launch { observeLastSurahRead() }
+            launch { subscribeLastSurahRead() }
         }
     }
 
     private suspend fun initData() {
         updateState { copy(isLoading = true, appError = null, emptyErrorState = null) }
-        val result = homeRepository.getCurrentLocation().getOrNull()
+        val result = homeRepository.getCurrentCoordinate().getOrNull()
         result?.let { geoResult ->
             when(geoResult) {
                 is GeolocatorResult.Success -> {
-                    homeRepository.getCurrentCityAndProvince(geoResult.data.coordinates).fold(
+                    homeRepository.getCurrentPlace(geoResult.data.coordinates).fold(
                         onSuccess = { (city, province, country) ->
-                            log { "Got city and province from coordinates: ${geoResult.data.coordinates}, city: $city, province: $province, country: $country" }
-
                             updateState {
                                 copy(
                                     screenData = screenData.copy(
@@ -102,7 +97,7 @@ class HomeViewModel(
             }
     }
 
-    private suspend fun observeLastSurahRead() {
+    private suspend fun subscribeLastSurahRead() {
         homeRepository.lastSurahRead
             .distinctUntilChanged()
             .collectLatest {
@@ -119,14 +114,11 @@ class HomeViewModel(
     private suspend fun getShalatSchedule(province: String, city: String) {
         homeRepository.getShalatSchedule(province, city)
             .onFailure {
-                // City/province not recognised by the API — let the user pick manually
                 navigationManager.navigateToInsideTab(TabDestination.HomeLocationPicker)
             }
-            .onSuccess {
-                updateState {
-                    copy(isLoading = false, appError = null, emptyErrorState = null)
-                }
-            }
+        updateState {
+            copy(isLoading = false, appError = null, emptyErrorState = null)
+        }
     }
 
     override fun navigationResultSuccess(key: String, data: NavigationResultData?) {
