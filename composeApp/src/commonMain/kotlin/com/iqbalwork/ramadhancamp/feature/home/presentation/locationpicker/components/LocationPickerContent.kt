@@ -46,7 +46,10 @@ fun LocationPickerContent(
                 is AnimateContentState.Error -> RamadhanErrorEmptyState(
                     modifier = Modifier.fillMaxSize(),
                     errorEmptyState = targetState.error.toErrorEmptyState(),
-                    onButtonClick = { action(LocationPickerEvent.LoadProvinces) },
+                    onButtonClick = {
+                        if (state.selectedProvince == null) action(LocationPickerEvent.LoadProvinces)
+                        else action(LocationPickerEvent.LoadCities)
+                    },
                 )
                 AnimateContentState.Loading -> Loader(
                     modifier = Modifier.fillMaxSize()

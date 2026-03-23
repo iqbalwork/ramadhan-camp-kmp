@@ -56,6 +56,11 @@ class LocationPickerViewModel(
                 viewModelScope.launch { loadProvinces() }
             }
 
+            is LocationPickerEvent.LoadCities -> {
+                val province = state.value.selectedProvince ?: return
+                viewModelScope.launch { loadKabKota(province) }
+            }
+
             is LocationPickerEvent.SelectProvince -> {
                 updateState { copy(selectedProvince = event.province, selectedCity = null, cities = emptyList()) }
                 viewModelScope.launch { loadKabKota(event.province) }

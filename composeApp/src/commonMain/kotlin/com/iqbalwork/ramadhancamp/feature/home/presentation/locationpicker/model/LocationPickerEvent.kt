@@ -4,6 +4,7 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.UiEvent
 
 sealed interface LocationPickerEvent : UiEvent {
     data object LoadProvinces : LocationPickerEvent
+    data object LoadCities : LocationPickerEvent
     data class SelectProvince(val province: String) : LocationPickerEvent
     data class SelectCity(val city: String) : LocationPickerEvent
     data object Confirm : LocationPickerEvent
