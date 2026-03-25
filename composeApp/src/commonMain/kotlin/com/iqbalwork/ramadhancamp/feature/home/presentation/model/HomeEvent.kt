@@ -6,4 +6,5 @@ sealed interface HomeEvent: UiEvent {
     data object LoadInitialData: HomeEvent
     data object GoToSetting: HomeEvent
     data object NavigateToLocationPicker: HomeEvent
+    data object OnSearchBoxClicked: HomeEvent
 }

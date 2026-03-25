@@ -48,7 +48,8 @@ fun HomeMainScreenContent(
                 is AnimateContentState.Error -> HomeMainErrorContent(
                     permissionDenied = state.isPermissionDenied,
                     error = targetState.error,
-                    action = action,
+                    onRetry = { action(HomeEvent.LoadInitialData) },
+                    onPermissionDenied = { action(HomeEvent.GoToSetting) },
                     modifier = Modifier.fillMaxSize()
                 )
                 AnimateContentState.Loading -> Loader(
@@ -61,6 +62,7 @@ fun HomeMainScreenContent(
                         .padding(top = 12.dp)
                     ,
                     homeMainData = state.screenData,
+                    onSearchBoxClicked = { action(HomeEvent.OnSearchBoxClicked) }
                 )
             }
         }

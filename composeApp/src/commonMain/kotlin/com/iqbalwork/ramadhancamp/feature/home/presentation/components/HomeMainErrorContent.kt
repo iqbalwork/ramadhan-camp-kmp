@@ -10,15 +10,16 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.RamadhanErro
 fun HomeMainErrorContent(
     permissionDenied: Boolean ,
     error: ErrorEmptyState,
-    action: (HomeEvent) -> Unit,
+    onRetry: () -> Unit,
+    onPermissionDenied: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     RamadhanErrorEmptyState(
         modifier = modifier,
         errorEmptyState = error,
         onButtonClick = {
-            if (permissionDenied) action(HomeEvent.GoToSetting)
-            else action(HomeEvent.LoadInitialData)
+            if (permissionDenied) onPermissionDenied()
+            else onRetry()
         }
     )
 }

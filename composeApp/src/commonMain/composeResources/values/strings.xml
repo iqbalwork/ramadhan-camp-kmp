@@ -24,5 +24,7 @@
     <string name="pick_city">PILIH KAB/KOTA</string>
     <string name="confirm_location">Konfirmasi Lokasi</string>
     <string name="pick_location">Pilih Lokasi</string>
+    <string name="find_ayat">Cari Ayat atau Surah...</string>
+    <string name="last_read">Terakhir Dibaca</string>
 
 </resources>

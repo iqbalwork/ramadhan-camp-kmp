@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,12 +19,15 @@ import com.iqbalwork.ramadhancamp.feature.home.presentation.model.NextPrayerUiMo
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import org.jetbrains.compose.resources.stringResource
 import ramadhancamp.composeapp.generated.resources.Res
+import ramadhancamp.composeapp.generated.resources.find_ayat
 import ramadhancamp.composeapp.generated.resources.home_main_header_greeting
+import ramadhancamp.composeapp.generated.resources.last_read
 
 @Composable
 fun HomeMainSuccessContent(
     homeMainData: HomeScreenUiModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onSearchBoxClicked: () -> Unit ,
 ) {
     Column(
         modifier = modifier
@@ -43,25 +47,18 @@ fun HomeMainSuccessContent(
             date = homeMainData.currentDate,
             remainingMinute = homeMainData.nextPrayerData.remainingMinutesToNextPrayer.toString()
         )
-    }
-}
 
-@Preview
-@Composable
-private fun HomeMainSuccessContentPreview() {
-    RamadhanTheme {
-        HomeMainSuccessContent(
-            homeMainData = HomeScreenUiModel(
-                city = "Jakarta",
-                country = "Indonesia",
-                currentDate = "Selasa, 24 Sya'ban 1445 H",
-                nextPrayerData = NextPrayerUiModel(
-                    nextPrayerName = "Maghrib",
-                    nextPrayerTime = "18:05",
-                    remainingMinutesToNextPrayer = 15
-                )
-            ),
-            modifier = Modifier.fillMaxSize().padding(16.dp)
+        AyatSearchBox(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 24.dp),
+            placeholder = stringResource(Res.string.find_ayat),
+            onClick = onSearchBoxClicked
+        )
+
+        Text(
+            text = stringResource(Res.string.last_read),
+            style = RamadhanTheme.typography.headlineMedium,
+            color = RamadhanTheme.colors.textPrimary,
+            modifier = Modifier.padding(bottom = 12.dp)
         )
     }
 }

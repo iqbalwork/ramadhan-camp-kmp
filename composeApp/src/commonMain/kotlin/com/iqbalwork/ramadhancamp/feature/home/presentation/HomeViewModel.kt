@@ -7,6 +7,7 @@ import com.iqbalwork.ramadhancamp.feature.home.presentation.mapper.toUiModel
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEffect
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEvent
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeState
+import com.iqbalwork.ramadhancamp.feature.quran.presentation.route.QuranTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
@@ -140,6 +141,10 @@ class HomeViewModel(
             HomeEvent.LoadInitialData -> viewModelScope.launch { initData() }
             HomeEvent.GoToSetting -> goToDeviceSettings()
             HomeEvent.NavigateToLocationPicker -> navigationManager.navigateTo(TabDestination.HomeLocationPicker)
+            HomeEvent.OnSearchBoxClicked -> {
+                navigationManager.switchTab(QuranTab)
+                //TODO send result to this tab then focus on search box there
+            }
         }
     }
 }
