@@ -26,5 +26,8 @@
     <string name="pick_location">Pilih Lokasi</string>
     <string name="find_ayat">Cari Ayat atau Surah...</string>
     <string name="last_read">Terakhir Dibaca</string>
+    <string name="ayat_number">Ayat %1$d</string>
+    <string name="populer_surah">Surah Populer</string>
+    <string name="total_ayahs">%1$d Ayat</string>
 
 </resources>

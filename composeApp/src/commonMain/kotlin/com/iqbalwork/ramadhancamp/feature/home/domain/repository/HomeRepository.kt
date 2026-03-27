@@ -2,6 +2,7 @@ package com.iqbalwork.ramadhancamp.feature.home.domain.repository
 
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.LastSurahRead
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.NextPrayer
+import com.iqbalwork.ramadhancamp.feature.home.domain.model.Surah
 import dev.jordond.compass.Coordinates
 import dev.jordond.compass.geolocation.GeolocatorResult
 import kotlinx.coroutines.flow.Flow
@@ -16,4 +17,5 @@ interface HomeRepository {
     suspend fun getProvinces(): Result<List<String>>
     suspend fun getKabKota(provinsi: String): Result<List<String>>
     suspend fun saveManualLocation(province: String, city: String)
+    suspend fun getPopularSurah(): Result<List<Surah>>
 }

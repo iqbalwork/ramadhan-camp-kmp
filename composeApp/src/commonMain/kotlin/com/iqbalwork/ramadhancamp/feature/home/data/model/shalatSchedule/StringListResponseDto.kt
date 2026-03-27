@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.data.model
+package com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule
 
 import kotlinx.serialization.Serializable
 

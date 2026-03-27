@@ -1,6 +1,6 @@
 package com.iqbalwork.ramadhancamp.feature.home.data.mapper
 
-import com.iqbalwork.ramadhancamp.feature.home.data.model.ShalatJadwalDto
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.ShalatJadwalDto
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.NextPrayer
 import com.iqbalwork.ramadhancamp.shared.common.extension.toMinutes
 import kotlinx.datetime.LocalDateTime

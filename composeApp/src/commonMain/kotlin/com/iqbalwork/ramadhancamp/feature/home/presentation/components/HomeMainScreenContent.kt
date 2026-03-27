@@ -62,7 +62,10 @@ fun HomeMainScreenContent(
                         .padding(top = 12.dp)
                     ,
                     homeMainData = state.screenData,
-                    onSearchBoxClicked = { action(HomeEvent.OnSearchBoxClicked) }
+                    onSearchBoxClicked = { action(HomeEvent.OnSearchBoxClicked) },
+                    onLastSurahCardClick = {
+                        //TODO navigate to Quran Detail Screen
+                    }
                 )
             }
         }

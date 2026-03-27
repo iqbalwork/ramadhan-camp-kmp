@@ -3,6 +3,7 @@ package com.iqbalwork.ramadhancamp.feature.home.presentation
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.home.domain.repository.HomeRepository
 import com.iqbalwork.ramadhancamp.feature.home.presentation.mapper.toErrorEmptyState
+import com.iqbalwork.ramadhancamp.feature.home.presentation.mapper.toSurahUi
 import com.iqbalwork.ramadhancamp.feature.home.presentation.mapper.toUiModel
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEffect
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEvent
@@ -13,6 +14,7 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
 import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
+import com.iqbalwork.ramadhancamp.shared.common.utils.toAppError
 import dev.jordond.compass.geolocation.GeolocatorResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -34,20 +36,43 @@ class HomeViewModel(
             initData()
             launch { subscribeNextPrayer() }
             launch { subscribeLastSurahRead() }
+            launch { getPopularSurah() }
             updateState { copy(screenData = screenData.copy(haveInitialized = true)) }
         }
+    }
+
+    private suspend fun getPopularSurah() {
+        homeRepository.getPopularSurah()
+            .onFailure {
+                updateState { copy(
+                    appError = it.toAppError(),
+                    emptyErrorState = null
+                ) }
+            }
+            .onSuccess {
+                updateState { copy(
+                    screenData = screenData.copy(
+                        popularSurahList = it.map { surah -> surah.toSurahUi() }
+                    ),
+                    appError = null,
+                    emptyErrorState = null
+                ) }
+            }
     }
 
     private suspend fun initData() {
         updateState { copy(isLoading = true, appError = null, emptyErrorState = null) }
 
         params.locationData?.let {
+            homeRepository.saveManualLocation(it.province, it.city)
+
             updateState {
                 copy(
                     screenData = screenData.copy(
                         city = it.city,
                         country = it.country,
-                        currentDate = getCurrentDateLocalized()
+                        currentDate = getCurrentDateLocalized(),
+                        selectThroughPicker = true
                     ),
                 )
             }

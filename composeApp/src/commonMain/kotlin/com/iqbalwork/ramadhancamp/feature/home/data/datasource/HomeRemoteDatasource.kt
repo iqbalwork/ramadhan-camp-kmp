@@ -1,7 +1,8 @@
 package com.iqbalwork.ramadhancamp.feature.home.data.datasource
 
-import com.iqbalwork.ramadhancamp.feature.home.data.model.ShalatScheduleDto
-import com.iqbalwork.ramadhancamp.feature.home.data.model.StringListResponseDto
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.ShalatScheduleDto
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.StringListResponseDto
+import com.iqbalwork.ramadhancamp.feature.home.data.model.surah.SurahDto
 import com.iqbalwork.ramadhancamp.shared.common.network.safeApiCall
 import io.ktor.client.HttpClient
 import io.ktor.client.request.setBody
@@ -33,6 +34,13 @@ class HomeRemoteDatasource(
             method = HttpMethod.Post
             url { path("v2/shalat/kabkota") }
             setBody(mapOf("provinsi" to provinsi))
+        }
+    }
+
+    suspend fun getSurahList(): Result<SurahDto> {
+        return httpClient.safeApiCall {
+            method = HttpMethod.Get
+            url { path("v2/surat") }
         }
     }
 }

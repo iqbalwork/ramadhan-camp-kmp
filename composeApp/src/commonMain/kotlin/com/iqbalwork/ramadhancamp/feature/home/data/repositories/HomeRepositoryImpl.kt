@@ -3,9 +3,10 @@ package com.iqbalwork.ramadhancamp.feature.home.data.repositories
 import com.iqbalwork.ramadhancamp.feature.home.data.datasource.HomePreferences
 import com.iqbalwork.ramadhancamp.feature.home.data.datasource.HomeRemoteDatasource
 import com.iqbalwork.ramadhancamp.feature.home.data.mapper.nextPrayer
-import com.iqbalwork.ramadhancamp.feature.home.data.model.ShalatScheduleDto
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.ShalatScheduleDto
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.LastSurahRead
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.NextPrayer
+import com.iqbalwork.ramadhancamp.feature.home.domain.model.Surah
 import com.iqbalwork.ramadhancamp.feature.home.domain.repository.HomeRepository
 import com.iqbalwork.ramadhancamp.shared.common.utils.math.haversineDistanceKm
 import dev.jordond.compass.Coordinates
@@ -34,6 +35,7 @@ class HomeRepositoryImpl(
     private val homeRemoteDatasource: HomeRemoteDatasource,
 ): HomeRepository {
 
+    private val popularSurahNumbers = arrayOf(36, 67, 18)
     private val scheduleFlow = MutableStateFlow<ShalatScheduleDto?>(null)
 
     override val nextPrayer: Flow<NextPrayer> = scheduleFlow
@@ -117,5 +119,21 @@ class HomeRepositoryImpl(
         // Clear coordinates so the 50 km cache doesn't suppress the next geocode attempt
         pref.lastLatitude = 0.0
         pref.lastLongitude = 0.0
+    }
+
+    override suspend fun getPopularSurah(): Result<List<Surah>> {
+        return homeRemoteDatasource.getSurahList().map { surahDto ->
+            surahDto.data
+                .filter { popularSurahNumbers.contains(it.nomor) }
+                .map {
+                    Surah(
+                        it.nomor,
+                        it.nama,
+                        it.namaLatin,
+                        it.jumlahAyat,
+                        it.tempatTurun
+                    )
+                }
+        }
     }
 }

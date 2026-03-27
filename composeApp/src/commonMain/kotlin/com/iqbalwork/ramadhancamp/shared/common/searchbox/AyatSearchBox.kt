@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.presentation.components
+package com.iqbalwork.ramadhancamp.shared.common.searchbox
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement.Absolute.spacedBy
@@ -30,12 +30,12 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 
 
 @Composable
-fun AyatSearchBox(
+fun RamadhanSearchBox(
     modifier: Modifier = Modifier,
     placeholder: String,
     onClick: () -> Unit,
 ) {
-    AyatSearchBoxImpl(
+    RamadhanSearchBoxImpl(
         modifier = modifier,
         state = null,
         placeholder = placeholder,
@@ -45,13 +45,13 @@ fun AyatSearchBox(
 }
 
 @Composable
-fun AyatSearchBox(
+fun RamadhanSearchBox(
     modifier: Modifier = Modifier,
     state: TextFieldState,
     placeholder: String,
     onSearchClick: () -> Unit,
 ) {
-    AyatSearchBoxImpl(
+    RamadhanSearchBoxImpl(
         modifier = modifier,
         state = state,
         placeholder = placeholder,
@@ -61,7 +61,7 @@ fun AyatSearchBox(
 }
 
 @Composable
-private fun AyatSearchBoxImpl(
+private fun RamadhanSearchBoxImpl(
     modifier: Modifier = Modifier,
     state: TextFieldState?,
     placeholder: String,
@@ -129,10 +129,10 @@ private fun AyatSearchBoxImpl(
 
 @Preview
 @Composable
-private fun AyatSearchBoxPreview() {
+private fun RamadhanSearchBoxPreview() {
     RamadhanTheme {
         Box(modifier = Modifier.background(RamadhanTheme.colors.bgPrimary).padding(16.dp)) {
-            AyatSearchBox(
+            RamadhanSearchBox(
                 placeholder = "Cari ayat...",
                 onClick = {}
             )
@@ -145,7 +145,7 @@ private fun AyatSearchBoxPreview() {
 private fun AyatSearchBoxWithStatePreview() {
     RamadhanTheme {
         Box(modifier = Modifier.background(RamadhanTheme.colors.bgPrimary).padding(16.dp)) {
-            AyatSearchBox(
+            RamadhanSearchBox(
                 state = TextFieldState(""),
                 placeholder = "Cari ayat...",
                 onSearchClick = {}
