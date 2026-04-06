@@ -6,7 +6,6 @@ data class HomeScreenUiModel(
     val currentDate: String = "",
     val nextPrayerData: NextPrayerUiModel = NextPrayerUiModel.EMPTY,
     val lastSurahReadData: LastSurahReadUiModel? = null,
-    val selectThroughPicker: Boolean = false,
     val haveInitialized: Boolean = false,
     val popularSurahList: List<SurahUiModel> = emptyList(),
 )

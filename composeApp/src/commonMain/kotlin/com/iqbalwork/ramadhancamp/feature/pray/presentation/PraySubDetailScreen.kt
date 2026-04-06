@@ -12,9 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
-import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoButton
-import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PraySubDetailScreen() {
@@ -25,12 +22,5 @@ fun PraySubDetailScreen() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text("Pray SubDetail", style = MaterialTheme.typography.headlineMedium)
-        DemoSection("Back to Root") {
-            DemoButton("Back to Pray Main")             { viewModel.backToMain() }
-            DemoButton("Back to Pray Main with Result") { viewModel.backToMainWithResult() }
-        }
-        DemoSection("Back") {
-            DemoButton("Back one step") { viewModel.back() }
-        }
     }
 }

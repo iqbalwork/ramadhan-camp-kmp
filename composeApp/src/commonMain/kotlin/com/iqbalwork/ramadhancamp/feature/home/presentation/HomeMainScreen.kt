@@ -35,7 +35,7 @@ fun HomeMainScreen(
         Lifecycle.Event.ON_RESUME,
         LocalLifecycleOwner.current,)
     {
-        if (state.screenData.selectThroughPicker || !state.screenData.haveInitialized) return@LifecycleEventEffect
+        if (!state.screenData.haveInitialized) return@LifecycleEventEffect
         dispatch(HomeEvent.LoadInitialData)
     }
 

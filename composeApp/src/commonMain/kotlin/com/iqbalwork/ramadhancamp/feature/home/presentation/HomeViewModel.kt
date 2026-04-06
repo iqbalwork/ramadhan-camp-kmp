@@ -72,7 +72,6 @@ class HomeViewModel(
                         city = it.city,
                         country = it.country,
                         currentDate = getCurrentDateLocalized(),
-                        selectThroughPicker = true
                     ),
                 )
             }

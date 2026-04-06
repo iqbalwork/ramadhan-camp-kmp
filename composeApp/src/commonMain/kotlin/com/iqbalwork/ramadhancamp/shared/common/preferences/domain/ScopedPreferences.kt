@@ -1,6 +1,7 @@
 package com.iqbalwork.ramadhancamp.shared.common.preferences.domain
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 
 interface ScopedPreferences {
     fun getString(key: String, default: String = ""): String
@@ -16,14 +17,14 @@ interface ScopedPreferences {
     fun remove(key: String)
     fun clear()
 
-    fun getStringFlow(key: String, default: String = ""): Flow<String>
-    fun getStringOrNullFlow(key: String): Flow<String?>
-    fun getIntFlow(key: String, default: Int = 0): Flow<Int>
-    fun getIntOrNullFlow(key: String): Flow<Int?>
-    fun getDoubleFlow(key: String, default: Double = 0.0): Flow<Double>
-    fun getDoubleOrNullFlow(key: String): Flow<Double?>
-    fun getBooleanFlow(key: String, default: Boolean = false): Flow<Boolean>
-    fun getBooleanOrNullFlow(key: String): Flow<Boolean?>
-    fun getLongFlow(key: String, default: Long = 0L): Flow<Long>
-    fun getLongOrNullFlow(key: String): Flow<Long?>
+    fun getStringStateFlow(key: String, default: String = ""): StateFlow<String>
+    fun getStringOrNullStateFlow(key: String): StateFlow<String?>
+    fun getIntStateFlow(key: String, default: Int = 0): StateFlow<Int>
+    fun getIntOrNullStateFlow(key: String): StateFlow<Int?>
+    fun getDoubleStateFlow(key: String, default: Double = 0.0): StateFlow<Double>
+    fun getDoubleOrNullStateFlow(key: String): StateFlow<Double?>
+    fun getBooleanStateFlow(key: String, default: Boolean = false): StateFlow<Boolean>
+    fun getBooleanOrNullStateFlow(key: String): StateFlow<Boolean?>
+    fun getLongStateFlow(key: String, default: Long = 0L): StateFlow<Long>
+    fun getLongOrNullStateFlow(key: String): StateFlow<Long?>
 }

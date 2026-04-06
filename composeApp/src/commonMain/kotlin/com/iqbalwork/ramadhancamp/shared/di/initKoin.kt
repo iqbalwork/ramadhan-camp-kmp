@@ -8,9 +8,12 @@ import com.iqbalwork.ramadhancamp.shared.common.geo.di.geoModule
 import com.iqbalwork.ramadhancamp.shared.common.navigation.di.navigationModule
 import com.iqbalwork.ramadhancamp.shared.common.network.di.networkModule
 import com.iqbalwork.ramadhancamp.shared.common.preferences.di.preferencesModule
+import org.koin.core.KoinApplication
 import org.koin.core.context.startKoin
-fun initKoin() {
+
+fun initKoin(appDeclaration: KoinApplication.() -> Unit = {}) {
     startKoin {
+        appDeclaration()
         modules(
             navigationModule,
             platformModule(),

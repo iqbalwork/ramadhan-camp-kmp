@@ -12,9 +12,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
-import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoButton
-import com.iqbalwork.ramadhancamp.shared.common.presentation.DemoSection
-import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun PrayDetailScreen() {
@@ -24,12 +21,5 @@ fun PrayDetailScreen() {
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         Text("Pray Detail", style = MaterialTheme.typography.headlineMedium)
-        DemoSection("In-Tab") {
-            DemoButton("Push SubDetail") { viewModel.navigateToSubDetail() }
-        }
-        DemoSection("Back") {
-            DemoButton("Back")             { viewModel.back() }
-            DemoButton("Back with Result") { viewModel.backWithResult() }
-        }
     }
 }

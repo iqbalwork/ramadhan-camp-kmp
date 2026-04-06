@@ -59,6 +59,7 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
+    implementation(libs.koin.android)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.testExt.junit)

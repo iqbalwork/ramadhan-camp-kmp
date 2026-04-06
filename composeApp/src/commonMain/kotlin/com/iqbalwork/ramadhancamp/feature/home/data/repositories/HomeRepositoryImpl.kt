@@ -53,9 +53,9 @@ class HomeRepositoryImpl(
         }
 
     override val lastSurahRead: Flow<LastSurahRead?> = combine(
-        flow = pref.surahName.flow,
-        flow2 = pref.lastAyatNumber.flow,
-        flow3 = pref.lastDateRead.flow,
+        flow = pref.surahNameStateFlow.stateFlow,
+        flow2 = pref.lastAyatNumberStateFlow.stateFlow,
+        flow3 = pref.lastDateReadStateFlow.stateFlow,
     ) { name, ayat, date ->
         if (name != null && ayat != null && date != null) LastSurahRead(name, ayat, date)
         else null
@@ -65,6 +65,7 @@ class HomeRepositoryImpl(
         runCatching {
             geolocator.current(Priority.HighAccuracy)
         }
+
 
     override suspend fun getCurrentPlace(coordinates: Coordinates): Result<Triple<String, String, String>> = runCatching {
         val lastLat = pref.lastLatitude
@@ -101,12 +102,6 @@ class HomeRepositoryImpl(
         scheduleFlow.value = homeRemoteDatasource.getShalatSchedule(province, city).getOrThrow()
     }
 
-    override suspend fun saveLastReadSurah(surah: LastSurahRead) {
-        pref.surahName.set(surah.surahName)
-        pref.lastAyatNumber.set(surah.ayatNumber)
-        pref.lastDateRead.set(surah.readDate)
-    }
-
     override suspend fun getProvinces(): Result<List<String>> =
         homeRemoteDatasource.getProvinces().map { it.data }
 
@@ -116,6 +111,7 @@ class HomeRepositoryImpl(
     override suspend fun saveManualLocation(province: String, city: String) {
         pref.lastCity = city
         pref.lastProvince = province
+        pref.lastCountry = "Indonesia"
         // Clear coordinates so the 50 km cache doesn't suppress the next geocode attempt
         pref.lastLatitude = 0.0
         pref.lastLongitude = 0.0

@@ -115,6 +115,9 @@ kotlin {
             implementation(libs.multiplatform.settings)
             implementation(libs.multiplatform.settings.coroutines)
 
+            // Alarmee (prayer notifications)
+            implementation(libs.alarmee)
+
         }
         commonTest.dependencies {
             api(libs.kotlin.test)

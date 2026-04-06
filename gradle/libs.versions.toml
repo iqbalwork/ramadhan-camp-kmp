@@ -50,6 +50,8 @@ turbine = "1.2.1"
 kotlinStdlib = "2.3.0"
 runner = "1.7.0"
 core = "1.7.0"
+alarmee = "1.5.0"
+
 # Geocoding and Geolocation
 compass = "3.0.1"
 webGeocoding = "1.6.7"
@@ -128,6 +130,8 @@ multiplatform-settings-coroutines = { module = "com.russhwolf:multiplatform-sett
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlinStdlib" }
 androidx-runner = { group = "androidx.test", name = "runner", version.ref = "runner" }
 androidx-core = { group = "androidx.test", name = "core", version.ref = "core" }
+
+alarmee = { module = "io.github.tweener:alarmee", version.ref = "alarmee" }
 
 # Geocoding
 compass-geocoder = { module = "dev.jordond.compass:geocoder", version.ref = "compass" }
