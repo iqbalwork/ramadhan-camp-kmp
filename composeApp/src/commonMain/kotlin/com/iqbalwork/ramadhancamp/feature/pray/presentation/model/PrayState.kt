@@ -1,18 +1,18 @@
 package com.iqbalwork.ramadhancamp.feature.pray.presentation.model
 
-import kotlinx.datetime.Clock
+import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Clock
 
 data class PrayState(
     val isLoading: Boolean = false,
-    val hasLocation: Boolean = false,
     val city: String = "",
-    val selectedDate: LocalDate = Clock.System.now()
-        .toLocalDateTime(TimeZone.currentSystemDefault()).date,
+    val hasLocation: Boolean = false,
+    val selectedDate: LocalDate = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date,
     val countdown: PrayCountdownUiModel? = null,
     val prayers: List<PrayItemUiModel> = emptyList(),
     val isDatePickerVisible: Boolean = false,
-    val error: String? = null
+    val error: AppError? = null
 )

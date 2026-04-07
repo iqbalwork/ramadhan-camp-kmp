@@ -31,11 +31,13 @@ fun HomeMainScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val dispatch = viewModel.rememberDispatch()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
     LifecycleEventEffect(
         Lifecycle.Event.ON_RESUME,
-        LocalLifecycleOwner.current,)
+        lifecycleOwner
+    )
     {
-        if (!state.screenData.haveInitialized) return@LifecycleEventEffect
+        if (!state.screenData.haveInitialized || state.pickedThroughPicker) return@LifecycleEventEffect
         dispatch(HomeEvent.LoadInitialData)
     }
 

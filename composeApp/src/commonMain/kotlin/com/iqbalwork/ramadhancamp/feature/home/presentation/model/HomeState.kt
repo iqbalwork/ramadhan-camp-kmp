@@ -7,6 +7,7 @@ data class HomeState(
     val isLoading: Boolean = false,
     val appError: AppError? = null,
     val emptyErrorState: ErrorEmptyState? = null,
+    val pickedThroughPicker: Boolean = false,
     val screenData: HomeScreenUiModel = HomeScreenUiModel(),
     val isPermissionDenied: Boolean = false
 )

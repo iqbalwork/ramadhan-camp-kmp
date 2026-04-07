@@ -29,5 +29,7 @@
     <string name="ayat_number">Ayat %1$d</string>
     <string name="populer_surah">Surah Populer</string>
     <string name="total_ayahs">%1$d Ayat</string>
+    <string name="shalat_schedule_not_avail">Jadwal Shalat Tidak Tersedia</string>
+    <string name="set_location_in_home_tab">Tolong Pilih Lokasi Anda Di Home Tab Agar Jadwal Shalat Tersedia</string>
 
 </resources>

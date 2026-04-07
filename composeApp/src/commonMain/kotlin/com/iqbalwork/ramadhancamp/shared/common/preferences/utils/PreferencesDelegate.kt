@@ -87,9 +87,10 @@ fun ScopedPreferences.nullableLong(key: String) =
 // StateFlowPref<String>  → flow never emits null, set() requires non-null value.
 // StateFlowPref<String?> → flow emits null when key absent, set(null) removes the key.
 class StateFlowPref<T>(
-    val stateFlow: StateFlow<T>,
+    private val stateFlow: StateFlow<T>,
     private val write: (T) -> Unit,
 ) {
+    operator fun invoke(): StateFlow<T> = this.stateFlow
     val value get() = stateFlow.value
     fun set(value: T) = write(value)
 }

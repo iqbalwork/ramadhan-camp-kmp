@@ -18,6 +18,7 @@ internal val accentEmerald = Color(0xFF4ADE80)
 internal val accentMint = Color(0xFF34D399)
 internal val accentTeal = Color(0xFF26A69A)
 internal val accentGold = Color(0xFFD4AF37)
+internal val accentSecondary =  Color(0xFF3D8B74)
 
 // Text
 internal val textPrimary = Color(0xFFF1F5F9)

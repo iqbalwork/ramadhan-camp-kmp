@@ -16,6 +16,7 @@ import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocaliz
 import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
 import com.iqbalwork.ramadhancamp.shared.common.utils.toAppError
 import dev.jordond.compass.geolocation.GeolocatorResult
+import io.github.aakira.napier.log
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -73,6 +74,7 @@ class HomeViewModel(
                         country = it.country,
                         currentDate = getCurrentDateLocalized(),
                     ),
+                    pickedThroughPicker = true
                 )
             }
 

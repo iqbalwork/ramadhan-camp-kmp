@@ -1,5 +1,6 @@
 package com.iqbalwork.ramadhancamp.feature.pray.presentation
 
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -32,76 +33,103 @@ import com.iqbalwork.ramadhancamp.feature.pray.presentation.components.PrayerRow
 import com.iqbalwork.ramadhancamp.feature.pray.presentation.model.PrayEvent
 import com.iqbalwork.ramadhancamp.feature.pray.presentation.model.PrayState
 import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.ErrorEmptyState
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.RamadhanErrorEmptyState
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.toErrorEmptyState
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.loading.Loader
 import com.iqbalwork.ramadhancamp.shared.common.ui.rememberDispatch
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
+import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
 import kotlinx.datetime.Instant
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
+private sealed interface AnimateContentState {
+    data object Loading : AnimateContentState
+    class Error(val error: AppError) : AnimateContentState
+    data object NoLocation : AnimateContentState
+    data object Success : AnimateContentState
+}
+
 @Composable
 fun PrayMainScreen() {
-    val vm: PrayViewModel = rememberViewModel()
-    val state by vm.state.collectAsStateWithLifecycle()
-    PrayContent(state = state, action = vm.rememberDispatch())
+    val viewModel: PrayViewModel = rememberViewModel()
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    PrayContent(
+        modifier = Modifier.fillMaxSize(),
+        state = state,
+        action = viewModel.rememberDispatch()
+    )
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PrayContent(
+    modifier: Modifier,
     state: PrayState,
     action: (PrayEvent) -> Unit
 ) {
     val colors = RamadhanTheme.colors
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = modifier
             .background(colors.bgPrimary)
-            .windowInsetsPadding(WindowInsets.statusBars)
     ) {
-        when {
-            !state.hasLocation -> NoLocationPlaceholder()
 
-            state.isLoading && state.prayers.isEmpty() -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = colors.accentPrimary
-                )
+        AnimatedContent(
+            modifier = Modifier.fillMaxSize(),
+            targetState = when {
+                state.isLoading -> AnimateContentState.Loading
+                state.error != null -> AnimateContentState.Error(state.error)
+                !state.hasLocation -> AnimateContentState.NoLocation
+                else -> AnimateContentState.Success
             }
+        ) { targetState ->
+            when(targetState) {
+                is AnimateContentState.NoLocation -> NoLocationPlaceholder()
 
-            else -> {
-                LazyColumn(
+                is AnimateContentState.Loading -> Loader(modifier = Modifier.fillMaxSize())
+
+                is AnimateContentState.Error -> RamadhanErrorEmptyState(
                     modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = 100.dp)
-                ) {
-                    item {
-                        PrayHeader(
-                            city = state.city,
-                            selectedDate = state.selectedDate,
-                            onCalendarClick = { action(PrayEvent.OpenDatePicker) }
-                        )
-                    }
+                    errorEmptyState = targetState.error.toErrorEmptyState(),
+                    onButtonClick = { action(PrayEvent.RetryLoadSchedule) }
+                )
 
-                    state.countdown?.let { countdown ->
+                is AnimateContentState.Success -> {
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = 100.dp)
+                    ) {
                         item {
-                            NextPrayerCard(
-                                countdown = countdown,
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                            PrayHeader(
+                                city = state.city,
+                                selectedDate = state.selectedDate,
+                                onCalendarClick = { action(PrayEvent.OpenDatePicker) }
                             )
                         }
-                    }
 
-                    item {
-                        Spacer(Modifier.height(16.dp))
-                    }
-                    items(state.prayers, key = { it.key }) { prayer ->
-                        PrayerRowItem(
-                            item = prayer,
-                            onAlarmToggle = { key, enabled ->
-                                action(PrayEvent.ToggleAlarm(key, enabled))
-                            },
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
-                        )
+                        state.countdown?.let { countdown ->
+                            item {
+                                NextPrayerCard(
+                                    countdown = countdown,
+                                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                                )
+                            }
+                        }
+
+                        item {
+                            Spacer(Modifier.height(16.dp))
+                        }
+                        items(state.prayers, key = { it.key }) { prayer ->
+                            PrayerRowItem(
+                                item = prayer,
+                                onAlarmToggle = { key, enabled ->
+                                    action(PrayEvent.ToggleAlarm(key, enabled))
+                                },
+                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp)
+                            )
+                        }
                     }
                 }
             }

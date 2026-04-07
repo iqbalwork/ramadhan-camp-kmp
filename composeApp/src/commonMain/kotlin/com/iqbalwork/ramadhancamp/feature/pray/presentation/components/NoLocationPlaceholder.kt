@@ -11,6 +11,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
+import org.jetbrains.compose.resources.stringResource
+import ramadhancamp.composeapp.generated.resources.Res
+import ramadhancamp.composeapp.generated.resources.set_location_in_home_tab
+import ramadhancamp.composeapp.generated.resources.shalat_schedule_not_avail
 
 @Composable
 fun NoLocationPlaceholder(modifier: Modifier = Modifier) {
@@ -27,19 +31,19 @@ fun NoLocationPlaceholder(modifier: Modifier = Modifier) {
         Icon(
             imageVector = Icons.Default.LocationOff,
             contentDescription = null,
-            tint = colors.textMuted,
+            tint = colors.accentSecondary,
             modifier = Modifier.size(64.dp)
         )
         Spacer(Modifier.height(16.dp))
         Text(
-            text = "Prayer times unavailable",
+            text = stringResource(Res.string.shalat_schedule_not_avail),
             style = typography.headlineSmall,
             color = colors.textPrimary,
             textAlign = TextAlign.Center
         )
         Spacer(Modifier.height(8.dp))
         Text(
-            text = "Please set your location from the Home tab to view prayer schedules.",
+            text = stringResource(Res.string.set_location_in_home_tab),
             style = typography.bodyLarge,
             color = colors.textMuted,
             textAlign = TextAlign.Center

@@ -62,7 +62,7 @@ fun NextPrayerCard(
                     color = colors.textSecondary
                 )
                 Text(
-                    text = "${countdown.hours}:${countdown.minutes}:${countdown.seconds}",
+                    text = countdown.remainingTime,
                     style = typography.headlineLarge.copy(fontSize = 48.sp),
                     color = colors.textPrimary,
                     fontWeight = FontWeight.Bold

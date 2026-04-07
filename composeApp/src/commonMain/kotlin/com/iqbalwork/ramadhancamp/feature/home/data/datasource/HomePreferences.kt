@@ -1,5 +1,6 @@
 package com.iqbalwork.ramadhancamp.feature.home.data.datasource
 
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.ShalatScheduleDto
 import com.iqbalwork.ramadhancamp.shared.common.preferences.domain.AppPreferences
 import com.iqbalwork.ramadhancamp.shared.common.preferences.utils.StateFlowPref
 import com.iqbalwork.ramadhancamp.shared.common.preferences.utils.double
@@ -22,6 +23,16 @@ class HomePreferences(prefs: AppPreferences) {
     val surahNameStateFlow: StateFlowPref<String?> = scoped.nullableStringStateFlowPref("surahName")
     val lastAyatNumberStateFlow: StateFlowPref<Int?> = scoped.nullableIntStateFlowPref("lastAyatNumber")
     val lastDateReadStateFlow: StateFlowPref<String?> = scoped.nullableStringStateFlowPref("lastDateRead")
+
+    private val monthCache = mutableMapOf<Pair<Int, Int>, ShalatScheduleDto>()
+
+    fun getShalatSchedule(month: Int, year: Int): ShalatScheduleDto? {
+        return monthCache[month to year]
+    }
+
+    fun saveShalatSchedule(month: Int, year: Int, schedule: ShalatScheduleDto) {
+        monthCache[month to year] = schedule
+    }
 
     fun clear() = scoped.clear()
 }

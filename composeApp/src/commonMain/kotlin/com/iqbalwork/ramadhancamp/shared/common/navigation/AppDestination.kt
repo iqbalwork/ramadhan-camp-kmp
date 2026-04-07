@@ -20,13 +20,9 @@ sealed interface RootDestination : NavKey {
 sealed interface TabDestination : NavKey {
     // Home
     @Serializable data class HomeMain(val param: HomeMainScreenParameters)           : TabDestination
-    @Serializable data object HomeDetail         : TabDestination
-    @Serializable data object HomeSubDetail      : TabDestination
     @Serializable data object HomeLocationPicker : TabDestination
     // Pray
     @Serializable data object PrayMain       : TabDestination
-    @Serializable data object PrayDetail     : TabDestination
-    @Serializable data object PraySubDetail  : TabDestination
     // Quran
     @Serializable data object QuranMain      : TabDestination
     @Serializable data object QuranDetail    : TabDestination
@@ -43,8 +39,6 @@ sealed interface TabDestination : NavKey {
 
 @Serializable
 sealed interface DialogDestination : NavKey {
-    @Serializable data object HomeSheet     : DialogDestination
-    @Serializable data object PraySheet     : DialogDestination
     @Serializable data object QuranSheet    : DialogDestination
     @Serializable data object QiblaSheet    : DialogDestination
     @Serializable data object BookmarkSheet : DialogDestination
@@ -56,12 +50,8 @@ val appSavedStateConfig = SavedStateConfiguration {
             subclass(RootDestination.Main::class,          RootDestination.Main.serializer())
             subclass(RootDestination.Auth::class,          RootDestination.Auth.serializer())
             subclass(TabDestination.HomeMain::class,             TabDestination.HomeMain.serializer())
-            subclass(TabDestination.HomeDetail::class,           TabDestination.HomeDetail.serializer())
-            subclass(TabDestination.HomeSubDetail::class,        TabDestination.HomeSubDetail.serializer())
             subclass(TabDestination.HomeLocationPicker::class,   TabDestination.HomeLocationPicker.serializer())
             subclass(TabDestination.PrayMain::class,          TabDestination.PrayMain.serializer())
-            subclass(TabDestination.PrayDetail::class,        TabDestination.PrayDetail.serializer())
-            subclass(TabDestination.PraySubDetail::class,     TabDestination.PraySubDetail.serializer())
             subclass(TabDestination.QuranMain::class,         TabDestination.QuranMain.serializer())
             subclass(TabDestination.QuranDetail::class,       TabDestination.QuranDetail.serializer())
             subclass(TabDestination.QuranSubDetail::class,    TabDestination.QuranSubDetail.serializer())
@@ -71,8 +61,6 @@ val appSavedStateConfig = SavedStateConfiguration {
             subclass(TabDestination.BookmarkMain::class,      TabDestination.BookmarkMain.serializer())
             subclass(TabDestination.BookmarkDetail::class,    TabDestination.BookmarkDetail.serializer())
             subclass(TabDestination.BookmarkSubDetail::class, TabDestination.BookmarkSubDetail.serializer())
-            subclass(DialogDestination.HomeSheet::class,      DialogDestination.HomeSheet.serializer())
-            subclass(DialogDestination.PraySheet::class,      DialogDestination.PraySheet.serializer())
             subclass(DialogDestination.QuranSheet::class,     DialogDestination.QuranSheet.serializer())
             subclass(DialogDestination.QiblaSheet::class,     DialogDestination.QiblaSheet.serializer())
             subclass(DialogDestination.BookmarkSheet::class,  DialogDestination.BookmarkSheet.serializer())

@@ -53,9 +53,9 @@ class HomeRepositoryImpl(
         }
 
     override val lastSurahRead: Flow<LastSurahRead?> = combine(
-        flow = pref.surahNameStateFlow.stateFlow,
-        flow2 = pref.lastAyatNumberStateFlow.stateFlow,
-        flow3 = pref.lastDateReadStateFlow.stateFlow,
+        flow = pref.surahNameStateFlow(),
+        flow2 = pref.lastAyatNumberStateFlow(),
+        flow3 = pref.lastDateReadStateFlow()
     ) { name, ayat, date ->
         if (name != null && ayat != null && date != null) LastSurahRead(name, ayat, date)
         else null

@@ -17,20 +17,21 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.iqbalwork.ramadhancamp.feature.pray.domain.model.Prayers
 import com.iqbalwork.ramadhancamp.feature.pray.presentation.model.PrayItemUiModel
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 
 @Composable
 fun PrayerRowItem(
     item: PrayItemUiModel,
-    onAlarmToggle: (key: String, enabled: Boolean) -> Unit,
+    onAlarmToggle: (key: Prayers, enabled: Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
 
     val isHighlighted = item.isNextPrayer
-    val rowAlpha = if (item.isPast) 0.7f else 1f
+    val rowAlpha = 1f
 
     val containerColor = if (isHighlighted)
         colors.bgSurface.copy(alpha = 0.2f)
@@ -114,7 +115,6 @@ fun PrayerRowItem(
                     style = typography.bodyLarge.copy(fontWeight = FontWeight.Bold),
                     color = colors.textPrimary
                 )
-                if (item.canSetAlarm) {
                     IconButton(
                         onClick = { onAlarmToggle(item.key, !item.isAlarmOn) },
                         modifier = Modifier.size(32.dp)
@@ -129,9 +129,7 @@ fun PrayerRowItem(
                             modifier = Modifier.size(20.dp)
                         )
                     }
-                } else {
-                    Spacer(Modifier.size(32.dp))
-                }
+
             }
         }
     }
