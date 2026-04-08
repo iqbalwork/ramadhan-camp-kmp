@@ -50,7 +50,7 @@ turbine = "1.2.1"
 kotlinStdlib = "2.3.0"
 runner = "1.7.0"
 core = "1.7.0"
-alarmee = "1.5.0"
+alarmee = "2.6.0"
 
 # Geocoding and Geolocation
 compass = "3.0.1"

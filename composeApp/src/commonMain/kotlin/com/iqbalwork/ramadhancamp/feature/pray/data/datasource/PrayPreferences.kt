@@ -1,5 +1,6 @@
 package com.iqbalwork.ramadhancamp.feature.pray.data.datasource
 
+import com.iqbalwork.ramadhancamp.feature.home.data.model.shalatSchedule.ShalatScheduleDto
 import com.iqbalwork.ramadhancamp.shared.common.preferences.domain.AppPreferences
 import com.iqbalwork.ramadhancamp.shared.common.preferences.utils.boolean
 import com.iqbalwork.ramadhancamp.feature.pray.domain.model.Prayers
@@ -8,6 +9,7 @@ private const val PRAY_PREF_SCOPE = "PRAY_PREF_SCOPE"
 
 class PrayPreferences(prefs: AppPreferences) {
     private val scoped = prefs.scope(PRAY_PREF_SCOPE)
+    private val monthCache = mutableMapOf<Triple<Int, Int, String>, ShalatScheduleDto>()
 
     var isFajrAlarmOn: Boolean by scoped.boolean("alarm_subuh", default = false)
     var isDzuhurAlarmOn: Boolean by scoped.boolean("alarm_dzuhur", default = false)
@@ -31,6 +33,14 @@ class PrayPreferences(prefs: AppPreferences) {
             Prayers.MAGHRIB -> isMaghribAlarmOn = enabled
             Prayers.ISYA    -> isIshaAlarmOn = enabled
         }
+    }
+
+    fun getShalatSchedule(month: Int, year: Int, city: String): ShalatScheduleDto? {
+        return monthCache[Triple(month, year, city)]
+    }
+
+    fun saveShalatSchedule(month: Int, year: Int, city: String, schedule: ShalatScheduleDto) {
+        monthCache[Triple(month, year, city)] = schedule
     }
 
 

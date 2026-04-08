@@ -24,15 +24,5 @@ class HomePreferences(prefs: AppPreferences) {
     val lastAyatNumberStateFlow: StateFlowPref<Int?> = scoped.nullableIntStateFlowPref("lastAyatNumber")
     val lastDateReadStateFlow: StateFlowPref<String?> = scoped.nullableStringStateFlowPref("lastDateRead")
 
-    private val monthCache = mutableMapOf<Pair<Int, Int>, ShalatScheduleDto>()
-
-    fun getShalatSchedule(month: Int, year: Int): ShalatScheduleDto? {
-        return monthCache[month to year]
-    }
-
-    fun saveShalatSchedule(month: Int, year: Int, schedule: ShalatScheduleDto) {
-        monthCache[month to year] = schedule
-    }
-
     fun clear() = scoped.clear()
 }

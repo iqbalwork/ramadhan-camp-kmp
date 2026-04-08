@@ -12,9 +12,13 @@ import com.iqbalwork.ramadhancamp.feature.pray.domain.model.PraySchedule
 import com.iqbalwork.ramadhancamp.feature.pray.domain.model.Prayers
 import com.iqbalwork.ramadhancamp.feature.pray.domain.model.toPrayerDisplayName
 import com.iqbalwork.ramadhancamp.feature.pray.domain.repository.PrayRepository
-import com.tweener.alarmee.Alarmee
-import com.tweener.alarmee.AlarmeeScheduler
-import com.tweener.alarmee.AndroidNotificationConfiguration
+import com.iqbalwork.ramadhancamp.shared.common.notifs.di.PRAY_ALARM_CHANNEL_ID
+import com.tweener.alarmee.AlarmeeService
+import com.tweener.alarmee.model.Alarmee
+import com.tweener.alarmee.model.AndroidNotificationConfiguration
+import com.tweener.alarmee.model.AndroidNotificationPriority
+import com.tweener.alarmee.model.IosNotificationConfiguration
+import io.github.aakira.napier.log
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -29,6 +33,10 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.number
 import kotlinx.datetime.plus
 import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.getString
+import ramadhancamp.composeapp.generated.resources.Res
+import ramadhancamp.composeapp.generated.resources.ic_shalat_notif_icon
+import ramadhancamp.composeapp.generated.resources.pray_notification_body
 import kotlin.time.Clock
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -36,7 +44,7 @@ class PrayRepositoryImpl(
     private val remoteDatasource: PrayRemoteDatasource,
     private val prayPreferences: PrayPreferences,
     private val homePreferences: HomePreferences,
-    private val alarmeService: AlarmeeScheduler,
+    private val alarmeeService: AlarmeeService,
 ) : PrayRepository {
 
     override val lastCity: StateFlow<String?> = homePreferences.lastCityStateFlow()
@@ -50,8 +58,7 @@ class PrayRepositoryImpl(
                     schedule?.data?.jadwal
                         ?.find { it.tanggal == now.day }
                         ?.let { emit(it.toPrayCountdown(now)) }
-                    val secondsUntilNextMinute = 60 - now.second
-                    delay(secondsUntilNextMinute * 1000L)
+                    delay(1000L)
                 }
             }
         }
@@ -102,15 +109,18 @@ class PrayRepositoryImpl(
 
                 val now = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault())
                 if (scheduledDateTime > now) {
-                    alarmeService.schedule(
+                    val displayName = prayerKey.toPrayerDisplayName()
+                    alarmeeService.local.schedule(
                         alarmee = Alarmee(
                             uuid = "pray-$prayerKey-$targetDate",
-                            notificationTitle = prayerKey.toPrayerDisplayName(),
-                            notificationBody = "It's time for ${prayerKey.toPrayerDisplayName()} prayer",
+                            notificationTitle = displayName,
+                            notificationBody = getString(Res.string.pray_notification_body, displayName),
                             scheduledDateTime = scheduledDateTime,
                             androidNotificationConfiguration = AndroidNotificationConfiguration(
-                                channelId = "pray_notifications"
-                            )
+                                channelId = PRAY_ALARM_CHANNEL_ID,
+                                priority = AndroidNotificationPriority.HIGH,
+                            ),
+                            iosNotificationConfiguration = IosNotificationConfiguration(),
                         )
                     )
                 }
@@ -118,7 +128,7 @@ class PrayRepositoryImpl(
         } else {
             for (dayOffset in -1..30) {
                 val targetDate = today.plus(dayOffset, DateTimeUnit.DAY)
-                alarmeService.cancel(uuid = "pray-$prayerKey-$targetDate")
+                alarmeeService.local.cancel(uuid = "pray-$prayerKey-$targetDate")
             }
         }
     }
@@ -132,12 +142,12 @@ class PrayRepositoryImpl(
     }
 
     private suspend fun getOrFetchMonthSchedule(month: Int, year: Int): Result<ShalatScheduleDto?> = runCatching {
-        homePreferences.getShalatSchedule(month, year)?.let { return Result.success(it) }
+        val city = homePreferences.lastCity ?: return Result.success(null)
+        prayPreferences.getShalatSchedule(month, year, city)?.let { return Result.success(it) }
 
         val province = homePreferences.lastProvince ?: return Result.success(null)
-        val city = homePreferences.lastCity ?: return Result.success(null)
 
         return remoteDatasource.getShalatSchedule(province, city, month, year)
-            .onSuccess { homePreferences.saveShalatSchedule(month, year, it) }
+            .onSuccess { prayPreferences.saveShalatSchedule(month, year, city,it) }
     }
 }
