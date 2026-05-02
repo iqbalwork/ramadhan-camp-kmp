@@ -43,4 +43,5 @@ val homeModule = module {
     singleOf(::HomePreferences)
     factoryOf(::HomeRemoteDatasource)
     factoryOf(::HomeRepositoryImpl) bind HomeRepository::class
+    factory<com.iqbalwork.ramadhancamp.feature.home.domain.usecase.UpdateLastSurahRead> { com.iqbalwork.ramadhancamp.feature.home.domain.usecase.UpdateLastSurahReadImpl(get()) }
 }

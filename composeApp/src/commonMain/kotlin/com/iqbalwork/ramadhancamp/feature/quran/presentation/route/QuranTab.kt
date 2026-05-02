@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation.route
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.route
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -7,7 +7,6 @@ import androidx.navigation3.runtime.NavKey
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranDetailScreen
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranMainScreen
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranSheetScreen
-import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranSubDetailScreen
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.bottomSheet.BottomSheetSceneStrategy
 import com.iqbalwork.ramadhancamp.shared.common.navigation.BackStackNode
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
@@ -32,8 +31,7 @@ object QuranTab : FeatureTab() {
 
     override fun EntryProviderScope<NavKey>.registerEntries() {
         entry<TabDestination.QuranMain>      { QuranMainScreen() }
-        entry<TabDestination.QuranDetail>    { QuranDetailScreen() }
-        entry<TabDestination.QuranSubDetail> { QuranSubDetailScreen() }
+        entry<TabDestination.QuranDetail>    { QuranDetailScreen(it.param) }
         entry<DialogDestination.QuranSheet>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
             val backStack = LocalBackStackNode.current.backStack
             QuranSheetScreen(onDismiss = { backStack.removeLastOrNull() })

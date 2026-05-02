@@ -1,9 +1,10 @@
-package com.iqbalwork.ramadhancamp.shared.common.navigation
+﻿package com.iqbalwork.ramadhancamp.shared.common.navigation
 
 import androidx.navigation3.runtime.NavKey
 import androidx.savedstate.serialization.SavedStateConfiguration
 import com.iqbalwork.ramadhancamp.feature.home.presentation.HomeMainScreenParameters
 import com.iqbalwork.ramadhancamp.feature.pray.presentation.PrayMainScreenParameters
+import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranDetailScreenParameters
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlinx.serialization.modules.SerializersModule
@@ -26,8 +27,7 @@ sealed interface TabDestination : NavKey {
     @Serializable data class PrayMain(val param: PrayMainScreenParameters) : TabDestination
     // Quran
     @Serializable data object QuranMain      : TabDestination
-    @Serializable data object QuranDetail    : TabDestination
-    @Serializable data object QuranSubDetail : TabDestination
+    @Serializable data class QuranDetail(val param: QuranDetailScreenParameters) : TabDestination
     // Qibla
     @Serializable data object QiblaMain      : TabDestination
     // Bookmark
@@ -52,7 +52,6 @@ val appSavedStateConfig = SavedStateConfiguration {
             subclass(TabDestination.PrayMain::class,          TabDestination.PrayMain.serializer())
             subclass(TabDestination.QuranMain::class,         TabDestination.QuranMain.serializer())
             subclass(TabDestination.QuranDetail::class,       TabDestination.QuranDetail.serializer())
-            subclass(TabDestination.QuranSubDetail::class,    TabDestination.QuranSubDetail.serializer())
             subclass(TabDestination.QiblaMain::class,         TabDestination.QiblaMain.serializer())
             subclass(TabDestination.BookmarkMain::class,      TabDestination.BookmarkMain.serializer())
             subclass(TabDestination.BookmarkDetail::class,    TabDestination.BookmarkDetail.serializer())

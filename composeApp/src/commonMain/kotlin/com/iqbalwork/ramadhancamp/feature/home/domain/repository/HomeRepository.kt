@@ -17,4 +17,5 @@ interface HomeRepository {
     suspend fun getKabKota(provinsi: String): Result<List<String>>
     suspend fun saveManualLocation(province: String, city: String)
     suspend fun getPopularSurah(): Result<List<Surah>>
+    suspend fun saveLastReadSurah(lastSurahRead: LastSurahRead)
 }

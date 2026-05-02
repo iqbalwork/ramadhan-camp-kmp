@@ -11,6 +11,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.saveable.rememberSaveableStateHolder
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
@@ -25,9 +26,12 @@ import com.iqbalwork.ramadhancamp.feature.pray.presentation.route.PrayTab
 import com.iqbalwork.ramadhancamp.feature.qibla.presentation.route.QiblaTab
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.route.QuranTab
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.bottomSheet.BottomSheetSceneStrategy
+import com.iqbalwork.ramadhancamp.shared.common.navigation.DeepLinkHandler
+import com.iqbalwork.ramadhancamp.shared.common.navigation.DeepLinkParser
 import com.iqbalwork.ramadhancamp.shared.common.navigation.FeatureTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalBackStackNode
 import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalCurrentTab
+import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.rememberTabState
 
 private val mainTabs: List<FeatureTab> = listOf(
@@ -44,6 +48,17 @@ fun MainScreen(initialTab: FeatureTab? = null) {
     val tabState = rememberTabState(mainTabs, resolvedInitial)
     val tabNodes = buildMap { mainTabs.forEach { tab -> put(tab, tab.backstack()) } }
     val saveableStateHolder = rememberSaveableStateHolder()
+
+    LaunchedEffect(Unit) {
+        DeepLinkHandler.deepLinks.collect { uri ->
+            val parsedDest = DeepLinkParser.parse(uri)
+            if (parsedDest is TabDestination.QuranDetail) {
+                tabState.select(QuranTab)
+                val node = tabNodes[QuranTab]!!
+                node.backStack.add(parsedDest)
+            }
+        }
+    }
 
     CompositionLocalProvider(LocalCurrentTab provides tabState) {
         Scaffold(

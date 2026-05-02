@@ -139,4 +139,10 @@ class HomeRepositoryImpl(
                 }
         }
     }
+
+    override suspend fun saveLastReadSurah(lastSurahRead: LastSurahRead) {
+        pref.surahNameStateFlow.set(lastSurahRead.surahName)
+        pref.lastAyatNumberStateFlow.set(lastSurahRead.ayatNumber)
+        pref.lastDateReadStateFlow.set(lastSurahRead.readDate)
+    }
 }

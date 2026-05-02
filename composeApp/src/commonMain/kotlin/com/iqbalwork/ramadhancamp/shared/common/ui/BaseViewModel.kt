@@ -146,7 +146,7 @@ internal fun <Params: UiParams, State : Any, Event : UiEvent, Effect : UiEffect>
 ) = screenContent.invoke(viewModel)
 
 @Composable
-internal fun <Event : UiEvent> BaseViewModel<*, *, Event, *>.rememberDispatch(): (Event) -> Unit {
+fun <Event : UiEvent> BaseViewModel<*, *, Event, *>.rememberDispatch(): (Event) -> Unit {
     return remember { { event: Event -> this.handleEvent(event) } }
 }
 
