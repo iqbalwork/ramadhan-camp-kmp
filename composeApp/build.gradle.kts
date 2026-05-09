@@ -105,6 +105,7 @@ kotlin {
             // Permissions
             implementation(libs.permissions.notifications)
             implementation(libs.permissions.compose)
+            implementation(libs.cmp.media.player)
 
         }
         commonTest.dependencies {

@@ -10,6 +10,8 @@ import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEvent
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeState
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.route.QuranTab
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
+import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
+import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
@@ -17,6 +19,7 @@ import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
 import com.iqbalwork.ramadhancamp.shared.common.utils.toAppError
 import dev.jordond.compass.geolocation.GeolocatorResult
 import io.github.aakira.napier.log
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.launch
@@ -169,7 +172,10 @@ class HomeViewModel(
             HomeEvent.NavigateToLocationPicker -> navigationManager.navigateTo(TabDestination.HomeLocationPicker)
             HomeEvent.OnSearchBoxClicked -> {
                 navigationManager.switchTab(QuranTab)
-                //TODO send result to this tab then focus on search box there
+                viewModelScope.launch {
+                    delay(300) // Wait for Quran tab to compose and subscribe
+                    navigationManager.sendResult(NavigationResult.Success("focus_search", NavigationResultData.EMPTY))
+                }
             }
         }
     }

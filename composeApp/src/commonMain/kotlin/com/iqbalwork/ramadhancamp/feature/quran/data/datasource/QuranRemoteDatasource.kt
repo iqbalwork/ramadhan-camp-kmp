@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.data.datasource
+﻿package com.iqbalwork.ramadhancamp.feature.quran.data.datasource
 
 import com.iqbalwork.ramadhancamp.feature.home.data.model.surah.SurahDto
 import com.iqbalwork.ramadhancamp.feature.quran.data.model.SearchRequestDto
@@ -27,11 +27,16 @@ class QuranRemoteDatasource(
         }
     }
 
-    suspend fun searchSurah(query: String): Result<SearchResponseDto> {
+    suspend fun search(query: String): Result<SearchResponseDto> {
         return httpClient.safeApiCall {
             method = HttpMethod.Post
             url { path("vector") }
-            setBody(SearchRequestDto(cari = query, tipe = listOf("surat")))
+            setBody(SearchRequestDto(
+                cari = query,
+                tipe = listOf("surat", "ayat"),
+                limit = 10,
+                minScore = 0.5
+            ))
         }
     }
 }

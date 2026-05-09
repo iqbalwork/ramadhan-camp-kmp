@@ -1,13 +1,15 @@
-package com.iqbalwork.ramadhancamp.feature.quran.data.model
+﻿package com.iqbalwork.ramadhancamp.feature.quran.data.model
 
-import com.iqbalwork.ramadhancamp.feature.home.data.model.surah.SuarahDataDto
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.JsonElement
 
 @Serializable
 data class SearchRequestDto(
     @SerialName("cari") val cari: String,
-    @SerialName("tipe") val tipe: List<String>
+    @SerialName("tipe") val tipe: List<String>,
+    @SerialName("limit") val limit: Int = 10,
+    @SerialName("minScore") val minScore: Double = 0.5
 )
 
 @Serializable
@@ -22,5 +24,5 @@ data class SearchResponseDto(
 data class SearchResultDto(
     @SerialName("tipe") val tipe: String,
     @SerialName("skor") val skor: Double,
-    @SerialName("data") val data: SuarahDataDto
+    @SerialName("data") val data: JsonElement
 )

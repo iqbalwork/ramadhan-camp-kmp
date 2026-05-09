@@ -1,4 +1,5 @@
 [versions]
+cmpMediaPlayer = "1.0.53"
 agp = "9.0.1"
 android-compileSdk = "36"
 android-minSdk = "27"
@@ -58,6 +59,7 @@ compass = "3.0.1"
 webGeocoding = "1.6.7"
 
 [libraries]
+cmp-media-player = { module = "network.chaintech:compose-multiplatform-media-player", version.ref = "cmpMediaPlayer" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-testJunit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { module = "junit:junit", version.ref = "junit" }

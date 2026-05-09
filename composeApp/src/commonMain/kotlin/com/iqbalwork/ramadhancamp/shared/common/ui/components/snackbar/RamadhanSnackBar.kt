@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar
+﻿package com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -14,6 +14,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -29,6 +34,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.swipe.SwipeToDismissVertical
+import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import com.iqbalwork.ramadhancamp.shared.common.ui.utils.TextResource
 import com.iqbalwork.ramadhancamp.shared.common.ui.utils.asString
 import kotlinx.coroutines.delay
@@ -100,6 +106,7 @@ fun RamadhanSnackBarHost(
                     ) {
                         SnackbarContainer(
                             modifier = Modifier
+                                .systemBarsPadding()
                                 .padding(horizontal = 12.dp)
                                 .fillMaxWidth(),
                             data = data
@@ -118,10 +125,13 @@ private fun SnackbarContainer(
     modifier: Modifier = Modifier,
     data: SnackBarData,
 ) {
+    val colors = RamadhanTheme.colors
+    val typography = RamadhanTheme.typography
+
     Row(
         modifier = modifier
             .background(
-                color = Color.Gray,
+                color = colors.bgSecondary,
                 shape = RoundedCornerShape(20.dp)
             )
             .padding(horizontal = 16.dp, vertical = 12.dp),
@@ -139,8 +149,9 @@ private fun SnackbarContainer(
         Text(
             text = data.message.asString(),
             maxLines = 3,
-            overflow = TextOverflow.Ellipsis
+            overflow = TextOverflow.Ellipsis,
+            style = typography.bodyLarge,
+            color = colors.textPrimary
         )
     }
 }
-

@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.di
+package com.iqbalwork.ramadhancamp.feature.quran.di
 
 import com.iqbalwork.ramadhancamp.feature.quran.data.datasource.QuranRemoteDatasource
 import com.iqbalwork.ramadhancamp.feature.quran.data.repositories.QuranRepositoryImpl
@@ -35,7 +35,6 @@ val quranModule = module {
                 parametersOf(params.get<BackStackNode>(), params.get<TabState>())
             },
             quranRepository = get(),
-            audioPlayer = get(),
             shareManager = get(),
             updateLastSurahRead = get()
         )
