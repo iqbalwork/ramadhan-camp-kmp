@@ -15,8 +15,10 @@ fun NextPrayer.toUiModel(): NextPrayerUiModel {
 
 fun LastSurahRead.toUiModel(): LastSurahReadUiModel {
     return LastSurahReadUiModel(
+        surahId = this.surahId,
         surahName = this.surahName,
         ayatNumber = this.ayatNumber,
         readDate = this.readDate
   )
 }
+

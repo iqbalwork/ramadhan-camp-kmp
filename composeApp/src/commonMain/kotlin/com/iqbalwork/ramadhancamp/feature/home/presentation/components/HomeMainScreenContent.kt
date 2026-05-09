@@ -64,10 +64,11 @@ fun HomeMainScreenContent(
                     homeMainData = state.screenData,
                     onSearchBoxClicked = { action(HomeEvent.OnSearchBoxClicked) },
                     onLastSurahCardClick = {
-                        //TODO navigate to Quran Detail Screen
+                        action(HomeEvent.OnLastSurahClicked)
                     }
                 )
             }
         }
     }
 }
+

@@ -42,27 +42,28 @@ fun QuranDetailScreen(params: QuranDetailScreenParameters) {
         modifier = Modifier.fillMaxSize(),
         snackbarFlow = viewModel.snackBarEvents
     ) {
-        QuranDetailContent(state = state, action = action, scrollToAyat = params.scrollToAyat)
+        QuranDetailContent(state = state, action = action, scrollToAyat = params.scrollToAyat, viewModel = viewModel)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Unit, scrollToAyat: Int? = null) {
+fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Unit, scrollToAyat: Int? = null, viewModel: QuranDetailViewModel) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
     val listState = rememberLazyListState()
 
     var isPlaying by remember { mutableStateOf(false) }
-    var currentTimeMs by remember { mutableStateOf(0f) }
-    var totalTimeMs by remember { mutableStateOf(0f) }
+    var currentTimeMs by remember { mutableStateOf(viewModel.persistCurrentTimeMs.toFloat()) }
+    var totalTimeMs by remember { mutableStateOf(viewModel.persistTotalTimeMs.toFloat()) }
 
-    var smoothProgressMs by remember { mutableFloatStateOf(0f) }
+    var smoothProgressMs by remember { mutableFloatStateOf(viewModel.persistSmoothProgressMs.toFloat()) }
     var isBuffering by remember { mutableStateOf(false) }
+    var shouldRestorePosition by remember { mutableStateOf(false) }
+    var pendingSeek by remember { mutableStateOf<Float?>(null) }
 
-    val mediaPlayerHost = remember {
-        MediaPlayerHost(mediaUrl = "", autoPlay = false, isLooping = false)
-    }
+    // MediaPlayerHost from ViewModel survives tab switches (composition destroy/recreate)
+    val mediaPlayerHost = viewModel.mediaPlayerHost
     val preBufferHost = remember {
         MediaPlayerHost(mediaUrl = "", autoPlay = false, isLooping = false)
     }
@@ -76,9 +77,15 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
                 }
                 is MediaPlayerEvent.CurrentTimeChange -> {
                     currentTimeMs = event.currentTime * 1000f  // Convert seconds to milliseconds
+                    viewModel.persistCurrentTimeMs = (event.currentTime * 1000f).toLong()
                 }
                 is MediaPlayerEvent.TotalTimeChange -> {
-                    totalTimeMs = event.totalTime * 1000f  // Convert seconds to milliseconds
+                    totalTimeMs = event.totalTime * 1000f
+                    viewModel.persistTotalTimeMs = (event.totalTime * 1000f).toLong()
+                    if (shouldRestorePosition && event.totalTime > 0f) {
+                        shouldRestorePosition = false
+                        pendingSeek = viewModel.persistCurrentTimeMs / 1000f
+                    }
                 }
                 is MediaPlayerEvent.BufferChange -> {
                     isBuffering = event.isBuffering
@@ -90,23 +97,50 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
                 else -> { }
             }
         }
-        // ADD THIS:
         mediaPlayerHost.onError = { error ->
             action(QuranDetailEvent.AudioError(error.message))
+        }
+    }
+
+    // Consume pending seek asynchronously -- runs AFTER the onEvents callback chain completes
+    LaunchedEffect(pendingSeek) {
+        pendingSeek?.let { seconds ->
+            kotlinx.coroutines.yield()
+            mediaPlayerHost.seekTo(seconds)
+            pendingSeek = null
         }
     }
 
     // SECOND: Load audio only after onEvent is set
     LaunchedEffect(state.playingAyat) {
         if (state.playingAyat != null) {
-            // Reset ticker on ayat change
-            smoothProgressMs = 0f
+            // Guard: if the same URL is already loaded (tab was switched away and back),
+            // restore position without auto-playing
+            if (state.playingAyat.audioUrl == viewModel.lastLoadedAudioUrl) {
+                // Tab return -- AudioPlayer re-composes with same url, creates new native player
+                smoothProgressMs = viewModel.persistSmoothProgressMs.toFloat()
+                currentTimeMs = viewModel.persistCurrentTimeMs.toFloat()
+                totalTimeMs = viewModel.persistTotalTimeMs.toFloat()
 
-            mediaPlayerHost.pause()
-            yield()
-            mediaPlayerHost.loadUrl(state.playingAyat.audioUrl)
-            delay(100)
-            mediaPlayerHost.play()
+                mediaPlayerHost.pause()
+                shouldRestorePosition = true
+                // AudioPlayer re-enters composition -> CMPAudioPlayer creates new native player
+                // -> TotalTimeChange fires -> pendingSeek triggers seekTo(savedPosition)
+                // DON'T call play() -- user should press play manually to resume
+            } else {
+                // New ayat - fresh load
+                smoothProgressMs = 0f
+                currentTimeMs = 0f
+                totalTimeMs = 0f
+
+                mediaPlayerHost.pause()
+                yield()
+                mediaPlayerHost.loadUrl(state.playingAyat.audioUrl)
+                viewModel.lastLoadedAudioUrl = state.playingAyat.audioUrl
+                mediaPlayerHost.seekTo(0f)
+                delay(100)
+                mediaPlayerHost.play()
+            }
         } else {
             mediaPlayerHost.pause()
         }
@@ -143,6 +177,7 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
             val elapsed = Clock.System.now().toEpochMilliseconds() - startWallClock
             val rawProgress = startProgress + elapsed
             smoothProgressMs = if (totalTimeMs > 0f) rawProgress.coerceAtMost(totalTimeMs) else rawProgress
+            viewModel.persistSmoothProgressMs = smoothProgressMs.toLong()
         }
     }
 
@@ -152,6 +187,7 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
 
     DisposableEffect(mediaPlayerHost) {
         onDispose {
+            viewModel.persistSmoothProgressMs = smoothProgressMs.toLong()
             mediaPlayerHost.pause()
         }
     }
@@ -253,9 +289,3 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
         }
     }
 }
-
-
-
-
-
-

@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.data.repositories
+﻿package com.iqbalwork.ramadhancamp.feature.home.data.repositories
 
 import com.iqbalwork.ramadhancamp.feature.home.data.datasource.HomePreferences
 import com.iqbalwork.ramadhancamp.feature.home.data.datasource.HomeRemoteDatasource
@@ -60,11 +60,12 @@ class HomeRepositoryImpl(
         }
 
     override val lastSurahRead: Flow<LastSurahRead?> = combine(
-        flow = pref.surahNameStateFlow(),
-        flow2 = pref.lastAyatNumberStateFlow(),
-        flow3 = pref.lastDateReadStateFlow()
-    ) { name, ayat, date ->
-        if (name != null && ayat != null && date != null) LastSurahRead(name, ayat, date)
+        pref.lastSurahIdStateFlow(),
+        pref.surahNameStateFlow(),
+        pref.lastAyatNumberStateFlow(),
+        pref.lastDateReadStateFlow()
+    ) { surahId, name, ayat, date ->
+        if (surahId != null && name != null && ayat != null && date != null) LastSurahRead(surahId, name, ayat, date)
         else null
     }
 
@@ -141,6 +142,7 @@ class HomeRepositoryImpl(
     }
 
     override suspend fun saveLastReadSurah(lastSurahRead: LastSurahRead) {
+        pref.lastSurahIdStateFlow.set(lastSurahRead.surahId)
         pref.surahNameStateFlow.set(lastSurahRead.surahName)
         pref.lastAyatNumberStateFlow.set(lastSurahRead.ayatNumber)
         pref.lastDateReadStateFlow.set(lastSurahRead.readDate)

@@ -1,6 +1,7 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
+import chaintech.videoplayer.host.MediaPlayerHost
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.LastSurahRead
 import com.iqbalwork.ramadhancamp.feature.home.domain.usecase.UpdateLastSurahRead
 import com.iqbalwork.ramadhancamp.feature.quran.domain.repository.QuranRepository
@@ -27,6 +28,17 @@ class QuranDetailViewModel(
     params, QuranDetailState(), navigationManager
 ) {
 
+    // Media player host that survives tab switches
+    val mediaPlayerHost = MediaPlayerHost(mediaUrl = "", autoPlay = false, isLooping = false)
+
+    // Track the last loaded audio URL to avoid re-loading when tab composition is recreated
+    var lastLoadedAudioUrl: String? = null
+
+    // Persisted playback position (survives tab switches)
+    var persistSmoothProgressMs: Long = 0L
+    var persistCurrentTimeMs: Long = 0L
+    var persistTotalTimeMs: Long = 0L
+
     init {
         loadSurahDetail()
     }
@@ -44,6 +56,11 @@ class QuranDetailViewModel(
         }
     }
 
+    override fun onCleared() {
+        mediaPlayerHost.pause()
+        super.onCleared()
+    }
+
     override fun handleEvent(event: QuranDetailEvent) {
         when (event) {
             is QuranDetailEvent.PlayAudio -> {
@@ -52,6 +69,18 @@ class QuranDetailViewModel(
                 val nextUrl = if (index != -1 && index < ayatList.size - 1)
                     ayatList[index + 1].audioUrl else null
                 updateState { copy(playingAyat = event.ayat, nextAyatAudioUrl = nextUrl) }
+
+                val surahDetail = state.value.surahDetail ?: return
+                viewModelScope.launch {
+                    updateLastSurahRead(
+                        LastSurahRead(
+                            surahId = surahDetail.number,
+                            surahName = surahDetail.namaLatin,
+                            ayatNumber = event.ayat.nomorAyat,
+                            readDate = kotlinx.datetime.Clock.System.now().toString()
+                        )
+                    )
+                }
             }
             is QuranDetailEvent.StopAudio -> {
                 updateState { copy(playingAyat = null) }
@@ -89,6 +118,7 @@ class QuranDetailViewModel(
                 viewModelScope.launch {
                     updateLastSurahRead(
                         LastSurahRead(
+                            surahId = event.surahId,
                             surahName = event.surahName,
                             ayatNumber = event.ayatNumber,
                             readDate = kotlinx.datetime.Clock.System.now().toString()

@@ -51,7 +51,7 @@ fun AudioPlayerBar(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = if (isBuffering) "Now Playing � Buffering..." else "Now Playing",
+                    text = if (isBuffering) "Buffering..." else "Now Playing",
                     style = typography.labelSmall,
                     color = if (isBuffering) colors.textMuted else colors.accentGold
                 )

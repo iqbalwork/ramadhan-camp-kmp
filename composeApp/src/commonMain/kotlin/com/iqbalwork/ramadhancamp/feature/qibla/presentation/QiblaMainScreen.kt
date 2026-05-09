@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.qibla.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.qibla.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -55,7 +55,6 @@ fun QiblaContent(
                 .fillMaxSize()
                 .background(colors.bgPrimary)
                 .padding(horizontal = 24.dp)
-                .statusBarsPadding()
                 .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
@@ -71,13 +70,6 @@ fun QiblaContent(
                     style = typography.headlineLarge,
                     color = colors.textPrimary
                 )
-                IconButton(onClick = { /* TODO Info Action */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Info,
-                        contentDescription = "Info",
-                        tint = colors.textMuted
-                    )
-                }
             }
             
             Spacer(modifier = Modifier.height(24.dp))
@@ -106,30 +98,32 @@ fun QiblaContent(
                 }
             }
             
-            Spacer(modifier = Modifier.weight(1f))
-            
-            CompassDial(
-                heading = state.currentHeading,
-                bearingToKaaba = state.bearingToKaaba,
-                isLoading = state.isLoading,
-                modifier = Modifier.fillMaxWidth()
-            )
-            
-            Spacer(modifier = Modifier.weight(1f))
-            
-            Text(
-                text = "Kiblat",
-                style = typography.headlineSmall,
-                color = colors.textPrimary,
-                fontWeight = FontWeight.Bold
-            )
             if (state.isLoading) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(48.dp),
-                    color = colors.accentGold,
-                    strokeWidth = 3.dp
-                )
+                Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator(color = colors.accentGold)
+                }
             } else {
+                Box(
+                    modifier = Modifier.weight(1f).fillMaxWidth(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CompassDial(
+                        heading = state.currentHeading,
+                        bearingToKaaba = state.bearingToKaaba,
+                        isLoading = state.isLoading,
+                    )
+                }
+
+                Text(
+                    text = "Kiblat",
+                    style = typography.headlineSmall,
+                    color = colors.textPrimary,
+                    fontWeight = FontWeight.Bold
+                )
+
                 Text(
                     text = "${state.bearingToKaaba?.roundToInt() ?: 0}°",
                     fontSize = 64.sp,
@@ -138,12 +132,11 @@ fun QiblaContent(
                 )
                 Text(
                     text = getIndonesianCardinal(state.bearingToKaaba ?: 0f),
-                    style = typography.bodyLarge,
+                    style = typography.labelLarge,
                     color = colors.textMuted
                 )
+                Spacer(modifier = Modifier.height(32.dp))
             }
-            
-            Spacer(modifier = Modifier.height(32.dp))
         }
     }
 }

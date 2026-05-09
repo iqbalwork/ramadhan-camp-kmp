@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.qibla.presentation.components
+﻿package com.iqbalwork.ramadhancamp.feature.qibla.presentation.components
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Box
@@ -44,7 +44,7 @@ fun CompassDial(
         modifier = modifier
             .fillMaxSize()
             .aspectRatio(1f)
-            .padding(32.dp),
+            .padding(48.dp),
         contentAlignment = Alignment.Center
     ) {
         Canvas(modifier = Modifier.fillMaxSize()) {
@@ -52,8 +52,8 @@ fun CompassDial(
             val radius = size.width / 2
 
             rotate(degrees = -heading, pivot = center) {
-                val petalColor = Color(0xFF132F28).copy(alpha = 0.5f)
-                val petalSize = Size(radius * 1.6f, radius * 1.6f)
+                val petalColor = Color(0xFF132F28).copy(alpha = 0.35f)
+                val petalSize = Size(radius * 1.8f, radius * 1.8f)
                 val petalOffset = Offset(center.x - petalSize.width / 2, center.y - petalSize.height / 2)
                 for (i in 0 until 4) {
                     rotate(degrees = i * 45f, pivot = center) {
@@ -61,43 +61,32 @@ fun CompassDial(
                             color = petalColor,
                             topLeft = petalOffset,
                             size = petalSize,
-                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.4f)
+                            cornerRadius = androidx.compose.ui.geometry.CornerRadius(radius * 0.5f)
                         )
                     }
                 }
 
                 drawCircle(
-                    color = Color(0xFF262C2A),
+                    color = colors.bgSecondary,
                     radius = radius,
                     center = center
                 )
 
-                for (i in 0 until 120) {
-                    val angle = i * 3f
-                    val isMajor = i % 10 == 0
-                    val isSuperMajor = i % 30 == 0
-
-                    val innerRadius = if (isSuperMajor) radius * 0.85f else if (isMajor) radius * 0.88f else radius * 0.94f
-                    val outerRadius = radius * 0.97f
-
+                for (i in 0 until 72) {
+                    val angle = i * 5f
                     val angleRad = (angle - 90) * (PI / 180f).toFloat()
-
-                    drawLine(
-                        color = if (isSuperMajor) colors.textPrimary else colors.textMuted,
-                        start = Offset(
-                            x = center.x + innerRadius * cos(angleRad),
-                            y = center.y + innerRadius * sin(angleRad)
-                        ),
-                        end = Offset(
-                            x = center.x + outerRadius * cos(angleRad),
-                            y = center.y + outerRadius * sin(angleRad)
-                        ),
-                        strokeWidth = if (isSuperMajor) 2.dp.toPx() else 1.dp.toPx(),
-                        cap = StrokeCap.Round
+                    val dotRadius = radius * 0.9f
+                    drawCircle(
+                        color = if (i % 18 == 0) colors.textPrimary else colors.textMuted,
+                        radius = 1.5.dp.toPx(),
+                        center = Offset(
+                            x = center.x + dotRadius * cos(angleRad),
+                            y = center.y + dotRadius * sin(angleRad)
+                        )
                     )
                 }
 
-                val cardinalRadius = radius * 0.72f
+                val cardinalRadius = radius * 1.18f
                 val cardinals = listOf("U" to 0f, "T" to 90f, "S" to 180f, "B" to 270f)
 
                 cardinals.forEach { (label, angle) ->
@@ -116,43 +105,59 @@ fun CompassDial(
 
                 if (bearingToKaaba != null && !isLoading) {
                     rotate(degrees = bearingToKaaba, pivot = center) {
+                        // Tail
+                        drawLine(
+                            color = Color(0xFF3B4844),
+                            start = center,
+                            end = Offset(center.x, center.y + radius * 0.3f),
+                            strokeWidth = 2.dp.toPx(),
+                            cap = StrokeCap.Round
+                        )
+
+                        // Pointer
                         drawLine(
                             color = colors.accentGold,
                             start = center,
                             end = Offset(center.x, center.y - radius * 0.65f),
-                            strokeWidth = 3.dp.toPx(),
+                            strokeWidth = 4.dp.toPx(),
                             cap = StrokeCap.Round
                         )
 
+                        // Center Pivot
                         drawCircle(
                             color = colors.accentGold,
                             radius = 6.dp.toPx(),
                             center = center
                         )
 
-                        translate(top = center.y - radius * 0.65f, left = center.x) {
-                            val kaabaSize = 24.dp.toPx()
+                        // Head
+                        val headCenter = Offset(center.x, center.y - radius * 0.65f)
+                        val headRadius = 16.dp.toPx()
+                        
+                        drawCircle(
+                            color = colors.accentGold,
+                            radius = headRadius,
+                            center = headCenter
+                        )
+
+                        translate(top = headCenter.y, left = headCenter.x) {
+                            val kaabaSize = 14.dp.toPx()
                             val halfSize = kaabaSize / 2
 
                             drawRect(
-                                color = colors.accentGold,
+                                color = Color.Black,
                                 topLeft = Offset(-halfSize, -halfSize),
                                 size = Size(kaabaSize, kaabaSize)
                             )
                             drawRect(
-                                color = Color.Black,
-                                topLeft = Offset(-halfSize + 2.dp.toPx(), -halfSize + 2.dp.toPx()),
-                                size = Size(kaabaSize - 4.dp.toPx(), kaabaSize - 4.dp.toPx())
+                                color = colors.accentGold,
+                                topLeft = Offset(-halfSize, -halfSize + 2.dp.toPx()),
+                                size = Size(kaabaSize, 2.dp.toPx())
                             )
                             drawRect(
                                 color = colors.accentGold,
-                                topLeft = Offset(-halfSize + 6.dp.toPx(), halfSize - 10.dp.toPx()),
-                                size = Size(4.dp.toPx(), 8.dp.toPx())
-                            )
-                            drawRect(
-                                color = colors.accentGold,
-                                topLeft = Offset(-halfSize + 2.dp.toPx(), -halfSize + 6.dp.toPx()),
-                                size = Size(kaabaSize - 4.dp.toPx(), 2.dp.toPx())
+                                topLeft = Offset(-halfSize + kaabaSize * 0.6f, -halfSize + 6.dp.toPx()),
+                                size = Size(3.dp.toPx(), kaabaSize - 6.dp.toPx())
                             )
                         }
                     }

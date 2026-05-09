@@ -9,6 +9,7 @@ import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEffect
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeEvent
 import com.iqbalwork.ramadhancamp.feature.home.presentation.model.HomeState
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.route.QuranTab
+import com.iqbalwork.ramadhancamp.shared.common.navigation.LastSurahNavigationData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
@@ -177,6 +178,20 @@ class HomeViewModel(
                     navigationManager.sendResult(NavigationResult.Success("focus_search", NavigationResultData.EMPTY))
                 }
             }
+            HomeEvent.OnLastSurahClicked -> {
+                val lastSurahData = state.value.screenData.lastSurahReadData ?: return
+                navigationManager.switchTab(QuranTab)
+                viewModelScope.launch {
+                    delay(300)
+                    navigationManager.sendResult(
+                        NavigationResult.Success(
+                            "navigate_to_last_ayah",
+                            LastSurahNavigationData(lastSurahData.surahId, lastSurahData.ayatNumber)
+                        )
+                    )
+                }
+            }
         }
     }
 }
+

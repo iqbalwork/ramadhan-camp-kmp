@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
+package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.quran.domain.repository.QuranRepository
@@ -8,6 +8,7 @@ import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranMainStat
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
+import com.iqbalwork.ramadhancamp.shared.common.navigation.LastSurahNavigationData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import kotlinx.coroutines.Job
@@ -19,7 +20,7 @@ class QuranMainViewModel(
     private val quranRepository: QuranRepository
 ) : BaseViewModel<Unit, QuranMainState, QuranMainEvent, QuranMainEffect>(
     Unit, QuranMainState(), navigationManager,
-    resultKeys = arrayOf("focus_search")
+    resultKeys = arrayOf("focus_search", "navigate_to_last_ayah")
 ) {
 
     private var searchJob: Job? = null
@@ -30,8 +31,23 @@ class QuranMainViewModel(
 
     override fun navigationResultSuccess(key: String, data: NavigationResultData?) {
         super.navigationResultSuccess(key, data)
-        if (key == "focus_search") {
-            updateState { copy(focusSearch = true) }
+        when (key) {
+            "focus_search" -> {
+                navigationManager.backToScreen(TabDestination.QuranMain)
+                updateState { copy(focusSearch = true) }
+            }
+            "navigate_to_last_ayah" -> {
+                val navData = data as? LastSurahNavigationData ?: return
+                navigationManager.backToScreen(TabDestination.QuranMain)
+                navigationManager.navigateToInsideTab(
+                    TabDestination.QuranDetail(
+                        QuranDetailScreenParameters(
+                            surahId = navData.surahId,
+                            scrollToAyat = navData.ayatNumber
+                        )
+                    )
+                )
+            }
         }
     }
 
@@ -91,3 +107,4 @@ class QuranMainViewModel(
         }
     }
 }
+

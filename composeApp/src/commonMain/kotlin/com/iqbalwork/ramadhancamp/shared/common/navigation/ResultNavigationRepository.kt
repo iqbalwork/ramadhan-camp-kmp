@@ -44,3 +44,8 @@ class ResultNavigationRepository(
 }
 
 data class TextResult(val text: String) : NavigationResultData
+
+data class LastSurahNavigationData(
+    val surahId: Int,
+    val ayatNumber: Int
+) : NavigationResultData
