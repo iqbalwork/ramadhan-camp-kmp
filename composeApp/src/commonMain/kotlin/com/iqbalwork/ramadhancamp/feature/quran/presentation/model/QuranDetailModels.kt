@@ -12,12 +12,17 @@ data class QuranDetailState(
     val surahDetail: SurahDetail? = null,
     val selectedAyatForOptions: Ayat? = null,
     val playingAyat: Ayat? = null,
-    val nextAyatAudioUrl: String? = null
+    val nextAyatAudioUrl: String? = null,
+    val isPlaying: Boolean = false,
+    val isBuffering: Boolean = false,
+    val totalTimeMs: Long = 0L,
+    val currentTimeMs: Long = 0L
 )
 
 sealed interface QuranDetailEvent : UiEvent {
     data class PlayAudio(val ayat: Ayat) : QuranDetailEvent
     data object StopAudio : QuranDetailEvent
+    data object TogglePlayPause : QuranDetailEvent
     data object PlayNextAyat : QuranDetailEvent
     data object PlayPrevAyat : QuranDetailEvent
     data class ShareAyat(val text: String) : QuranDetailEvent
@@ -30,6 +35,9 @@ sealed interface QuranDetailEvent : UiEvent {
     data class OnCopyClicked(val ayat: Ayat) : QuranDetailEvent
     data class AudioError(val message: String) : QuranDetailEvent
     data object Retry : QuranDetailEvent
+    data object OnScreenDispose : QuranDetailEvent
+    data object OnScreenResume : QuranDetailEvent
+    data class OnSeekAudio(val positionMs: Long) : QuranDetailEvent
 }
 
 sealed interface QuranDetailEffect : UiEffect

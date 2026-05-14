@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -8,7 +8,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -25,10 +25,11 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 fun AudioPlayerBar(
     surahName: String,
     reciterName: String,
+    currentTimeMs: Long,
+    totalDurationMs: Long,
     isPlaying: Boolean,
     isBuffering: Boolean = false,
-    elapsedMs: Long = 0L,
-    totalDurationMs: Long = 0L,
+    onSeek: (Long) -> Unit,
     onPlayPause: () -> Unit,
     onNext: () -> Unit,
     onPrev: () -> Unit,
@@ -36,6 +37,30 @@ fun AudioPlayerBar(
 ) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
+
+    var smoothProgressMs by remember { mutableFloatStateOf(currentTimeMs.toFloat()) }
+    var isDraggingSlider by remember { mutableStateOf(false) }
+    var localSliderProgress by remember { mutableFloatStateOf(0f) }
+
+    // Sync smooth progress when currentTimeMs from ViewModel updates significantly
+    LaunchedEffect(currentTimeMs) {
+        if (!isDraggingSlider && kotlin.math.abs(smoothProgressMs - currentTimeMs) > 1500f) {
+            smoothProgressMs = currentTimeMs.toFloat()
+        }
+    }
+
+    // 60fps ticker
+    LaunchedEffect(isPlaying, isBuffering) {
+        if (!isPlaying || isBuffering) return@LaunchedEffect
+        val startWallClock = kotlinx.datetime.Clock.System.now().toEpochMilliseconds()
+        val startProgress = smoothProgressMs
+        while (true) {
+            kotlinx.coroutines.delay(16L)
+            val elapsed = kotlinx.datetime.Clock.System.now().toEpochMilliseconds() - startWallClock
+            val rawProgress = startProgress + elapsed
+            smoothProgressMs = if (totalDurationMs > 0L) rawProgress.coerceAtMost(totalDurationMs.toFloat()) else rawProgress
+        }
+    }
 
     Column(
         modifier = modifier
@@ -110,6 +135,8 @@ fun AudioPlayerBar(
             }
         }
 
+        val displayProgressMs = if (isDraggingSlider) (localSliderProgress * totalDurationMs).toLong() else smoothProgressMs.toLong()
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -117,7 +144,7 @@ fun AudioPlayerBar(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = formatDuration(elapsedMs),
+                text = formatDuration(displayProgressMs),
                 style = typography.labelSmall,
                 color = colors.textMuted
             )
@@ -128,13 +155,21 @@ fun AudioPlayerBar(
             )
         }
 
-        val sliderProgress = if (totalDurationMs > 0L) elapsedMs.toFloat() / totalDurationMs.toFloat() else 0f
+        val sliderProgress = if (isDraggingSlider) localSliderProgress else if (totalDurationMs > 0L) smoothProgressMs / totalDurationMs.toFloat() else 0f
 
         if (totalDurationMs > 0L) {
             Slider(
                 value = sliderProgress,
-                onValueChange = {},
-                onValueChangeFinished = {},
+                onValueChange = { newValue ->
+                    isDraggingSlider = true
+                    localSliderProgress = newValue
+                },
+                onValueChangeFinished = {
+                    isDraggingSlider = false
+                    val seekMs = (localSliderProgress * totalDurationMs).toLong()
+                    smoothProgressMs = seekMs.toFloat()
+                    onSeek(seekMs)
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),

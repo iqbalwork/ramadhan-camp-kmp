@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.feature.quran.domain.model.Ayat
@@ -22,17 +23,22 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 fun AyatCard(
     ayat: Ayat,
     onOptionsClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isActive: Boolean = false
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .then(
+                if (isActive) Modifier.background(RamadhanTheme.colors.bgSurface)
+                else Modifier
+            )
             .padding(vertical = 8.dp)
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(RamadhanTheme.colors.bgSecondary)
+                .background(if (isActive) Color.Transparent else RamadhanTheme.colors.bgSecondary)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween

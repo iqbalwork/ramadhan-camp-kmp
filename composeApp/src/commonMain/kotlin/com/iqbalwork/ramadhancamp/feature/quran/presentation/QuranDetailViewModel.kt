@@ -1,6 +1,7 @@
 package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
+import chaintech.videoplayer.host.MediaPlayerEvent
 import chaintech.videoplayer.host.MediaPlayerHost
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.LastSurahRead
 import com.iqbalwork.ramadhancamp.feature.home.domain.usecase.UpdateLastSurahRead
@@ -11,6 +12,7 @@ import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranDetailSt
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.ShareManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.RamadhanSnackBarProps
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.SnackBarData
@@ -36,12 +38,70 @@ class QuranDetailViewModel(
     var lastLoadedAudioUrl: String? = null
 
     // Persisted playback position (survives tab switches)
-    var persistSmoothProgressMs: Long = 0L
     var persistCurrentTime: Float = 0F
     var persistTotalTimeMs: Long = 0L
 
+    private var pendingSeekMs: Long? = null
+
     init {
+        setupMediaPlayer()
         loadSurahDetail()
+    }
+
+    private fun setupMediaPlayer() {
+        mediaPlayerHost.onEvent = { event ->
+            when (event) {
+                is MediaPlayerEvent.PauseChange -> {
+                    updateState { copy(isPlaying = !event.isPaused) }
+                }
+                is MediaPlayerEvent.CurrentTimeChange -> {
+                    val ms = (event.currentTime * 1000f).toLong()
+                    // Ignore bogus 0.0 emission from freshly created native player
+                    if (ms == 0L && pendingSeekMs != null && !state.value.isPlaying) {
+                        // ignore
+                    } else {
+                        updateState { copy(currentTimeMs = ms) }
+                    }
+                }
+                is MediaPlayerEvent.TotalTimeChange -> {
+                    val ms = (event.totalTime * 1000f).toLong()
+                    persistTotalTimeMs = ms
+                    updateState { copy(totalTimeMs = ms) }
+                }
+                is MediaPlayerEvent.BufferChange -> {
+                    updateState { copy(isBuffering = event.isBuffering) }
+                }
+                is MediaPlayerEvent.MediaEnd -> {
+                    val currentAyat = state.value.playingAyat
+                    val ayatList = state.value.surahDetail?.ayat
+                    if (currentAyat != null && ayatList != null) {
+                        val index = ayatList.indexOf(currentAyat)
+                        if (index != -1 && index < ayatList.size - 1) {
+                            handleEvent(QuranDetailEvent.PlayAudio(ayatList[index + 1]))
+                        } else {
+                            mediaPlayerHost.pause()
+                            mediaPlayerHost.seekTo(0f)
+                            updateState { copy(isPlaying = false, currentTimeMs = 0L) }
+                        }
+                    } else {
+                        mediaPlayerHost.pause()
+                        mediaPlayerHost.seekTo(0f)
+                        updateState { copy(isPlaying = false, currentTimeMs = 0L) }
+                    }
+                }
+                else -> {}
+            }
+        }
+        mediaPlayerHost.onError = { error ->
+            showSnackBar(
+                SnackBarData(
+                    message = TextResource.PlainText(error.toString()),
+                    icon = Res.drawable.image_danger_error,
+                    durationMillis = RamadhanSnackBarProps.Duration.Long,
+                    position = RamadhanSnackBarProps.Position.Bottom
+                )
+            )
+        }
     }
 
     private fun loadSurahDetail() {
@@ -65,11 +125,34 @@ class QuranDetailViewModel(
     override fun handleEvent(event: QuranDetailEvent) {
         when (event) {
             is QuranDetailEvent.PlayAudio -> {
+                pendingSeekMs = null
                 val ayatList = state.value.surahDetail?.ayat ?: return
                 val index = ayatList.indexOf(event.ayat)
                 val nextUrl = if (index != -1 && index < ayatList.size - 1)
                     ayatList[index + 1].audioUrl else null
-                updateState { copy(playingAyat = event.ayat, nextAyatAudioUrl = nextUrl) }
+                
+                updateState { 
+                    copy(
+                        playingAyat = event.ayat, 
+                        nextAyatAudioUrl = nextUrl,
+                        isPlaying = true,
+                        isBuffering = true
+                    ) 
+                }
+
+                val url = event.ayat.audioUrl
+                if (url == lastLoadedAudioUrl) {
+                    mediaPlayerHost.seekTo(0f)
+                    mediaPlayerHost.play()
+                } else {
+                    mediaPlayerHost.loadUrl(url)
+                    lastLoadedAudioUrl = url
+                    // Give player a tiny moment to load
+                    viewModelScope.launch {
+                        delay(100)
+                        mediaPlayerHost.play()
+                    }
+                }
 
                 val surahDetail = state.value.surahDetail ?: return
                 viewModelScope.launch {
@@ -84,7 +167,19 @@ class QuranDetailViewModel(
                 }
             }
             is QuranDetailEvent.StopAudio -> {
+                mediaPlayerHost.pause()
                 updateState { copy(playingAyat = null) }
+            }
+            is QuranDetailEvent.TogglePlayPause -> {
+                if (state.value.isPlaying) {
+                    mediaPlayerHost.pause()
+                } else {
+                    pendingSeekMs?.let {
+                        mediaPlayerHost.seekTo(it / 1000f)
+                        pendingSeekMs = null
+                    }
+                    mediaPlayerHost.play()
+                }
             }
             is QuranDetailEvent.PlayNextAyat -> {
                 val currentAyat = state.value.playingAyat ?: return
@@ -92,11 +187,9 @@ class QuranDetailViewModel(
                 val index = ayatList.indexOf(currentAyat)
                 if (index != -1 && index < ayatList.size - 1) {
                     val nextAyat = ayatList[index + 1]
-                    // Compute next-next URL for pre-buffering
-                    val nextNextUrl = if (index + 1 < ayatList.size - 1)
-                        ayatList[index + 2].audioUrl else null
-                    updateState { copy(playingAyat = nextAyat, nextAyatAudioUrl = nextNextUrl) }
+                    handleEvent(QuranDetailEvent.PlayAudio(nextAyat))
                 } else {
+                    mediaPlayerHost.pause()
                     updateState { copy(playingAyat = null, nextAyatAudioUrl = null) }
                 }
             }
@@ -104,12 +197,16 @@ class QuranDetailViewModel(
                 val currentAyat = state.value.playingAyat ?: return
                 val ayatList = state.value.surahDetail?.ayat ?: return
                 val index = ayatList.indexOf(currentAyat)
-                if (index > 0) {
-                    val prevAyat = ayatList[index - 1]
-                    // Compute next URL relative to prev (for pre-buffering after going back)
-                    val nextUrl = if (index < ayatList.size - 1)
-                        ayatList[index].audioUrl else null  // current ayat = "next" relative to prev
-                    updateState { copy(playingAyat = prevAyat, nextAyatAudioUrl = nextUrl) }
+                if (index != -1) {
+                    if (state.value.currentTimeMs > 2000L || index == 0) {
+                        mediaPlayerHost.seekTo(0f)
+                        if (!state.value.isPlaying) {
+                            mediaPlayerHost.play()
+                        }
+                    } else {
+                        val prevAyat = ayatList[index - 1]
+                        handleEvent(QuranDetailEvent.PlayAudio(prevAyat))
+                    }
                 }
             }
             is QuranDetailEvent.ShareAyat -> {
@@ -159,6 +256,17 @@ class QuranDetailViewModel(
             }
             is QuranDetailEvent.Retry -> {
                 loadSurahDetail()
+            }
+            is QuranDetailEvent.OnScreenDispose -> {
+                // Save current time, unless we already had a pending seek that wasn't consumed
+                pendingSeekMs = pendingSeekMs ?: state.value.currentTimeMs
+                mediaPlayerHost.pause()
+            }
+            is QuranDetailEvent.OnScreenResume -> {
+                // If playingAyat != null, we just wait for user to click play
+            }
+            is QuranDetailEvent.OnSeekAudio -> {
+                mediaPlayerHost.seekTo(event.positionMs / 1000f)
             }
         }
     }

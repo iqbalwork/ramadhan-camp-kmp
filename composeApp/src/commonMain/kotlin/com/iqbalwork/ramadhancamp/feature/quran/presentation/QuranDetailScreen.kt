@@ -21,11 +21,9 @@ import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
 import com.iqbalwork.ramadhancamp.shared.common.ui.rememberDispatch
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import kotlinx.coroutines.delay
-import kotlin.time.Clock
 import org.koin.core.parameter.parametersOf
 import chaintech.videoplayer.host.MediaPlayerHost
 import chaintech.videoplayer.ui.audio.AudioPlayer
-import chaintech.videoplayer.host.MediaPlayerEvent
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.loading.Loader
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.RamadhanSnackBarHost
 import androidx.compose.animation.AnimatedContent
@@ -33,7 +31,6 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.RamadhanErro
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.toErrorEmptyState
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.error.ErrorEmptyState
 import io.github.aakira.napier.log
-
 
 private sealed interface QuranDetailAnimState {
     data object Loading : QuranDetailAnimState
@@ -43,7 +40,6 @@ private sealed interface QuranDetailAnimState {
 
 @Composable
 fun QuranDetailScreen(params: QuranDetailScreenParameters) {
-
     val viewModel: QuranDetailViewModel = rememberViewModel { parametersOf(params) }
     val state by viewModel.state.collectAsStateWithLifecycle()
     val action = viewModel.rememberDispatch()
@@ -63,105 +59,27 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
     val typography = RamadhanTheme.typography
     val listState = rememberLazyListState()
 
-    var isPlaying by remember { mutableStateOf(false) }
-    var totalTimeMs by remember { mutableStateOf(viewModel.persistTotalTimeMs.toFloat()) }
-
-    var currentTime by remember { mutableFloatStateOf(0F) }
-
-    var smoothProgressMs by remember { mutableFloatStateOf(viewModel.persistCurrentTime * 1000f) }
-    var isBuffering by remember { mutableStateOf(false) }
-    var shouldRestorePosition by remember { mutableStateOf(false) }
-    var pendingSeek by remember { mutableStateOf<Float?>(null) }
-
-    // MediaPlayerHost from ViewModel survives tab switches (composition destroy/recreate)
     val mediaPlayerHost = viewModel.mediaPlayerHost
     val preBufferHost = remember {
         MediaPlayerHost(mediaUrl = "", autoPlay = false, isLooping = false)
     }
 
-    // FIRST: Set onEvent before anything else starts playback
-    LaunchedEffect(mediaPlayerHost) {
-        mediaPlayerHost.onEvent = { event ->
-            when (event) {
-                is MediaPlayerEvent.PauseChange -> {
-                    log(tag = "MEDIA") { "is playing ${!event.isPaused}" }
-                    isPlaying = !event.isPaused
-                }
-                is MediaPlayerEvent.CurrentTimeChange -> {
-                    log(tag = "MEDIA") { "PERSISTANT ${(event.currentTime * 1000f).toLong()}" }
-                    currentTime = event.currentTime
-                    // Sync the smooth progress if it drifts too far from the real time
-                    val realMs = event.currentTime * 1000f
-                    if (kotlin.math.abs(smoothProgressMs - realMs) > 1500f) {
-                        smoothProgressMs = realMs
-                    }
-                }
-                is MediaPlayerEvent.TotalTimeChange -> {
-                    totalTimeMs = event.totalTime * 1000f
-                    viewModel.persistTotalTimeMs = (event.totalTime * 1000f).toLong()
-                    if (shouldRestorePosition && event.totalTime > 0f) {
-                        shouldRestorePosition = false
-                        pendingSeek = viewModel.persistCurrentTime
-                    }
-                }
-                is MediaPlayerEvent.BufferChange -> {
-                    isBuffering = event.isBuffering
-                }
-                is MediaPlayerEvent.MediaEnd -> {
-                    mediaPlayerHost.pause()
-                    action(QuranDetailEvent.StopAudio)
-                }
-                else -> { }
-            }
-        }
-        mediaPlayerHost.onError = { error ->
-            action(QuranDetailEvent.AudioError(error.message))
+    DisposableEffect(Unit) {
+        action(QuranDetailEvent.OnScreenResume)
+        onDispose {
+            action(QuranDetailEvent.OnScreenDispose)
         }
     }
 
-    // SECOND: Load audio only after onEvent is set
-    LaunchedEffect(state.playingAyat) {
-        if (state.playingAyat != null) {
-            // Guard: if the same URL is already loaded (tab was switched away and back),
-            // restore position without auto-playing
-            if (state.playingAyat.audioUrl == viewModel.lastLoadedAudioUrl) {
-                // Tab return -- AudioPlayer re-composes with same url, creates new native player
-                smoothProgressMs = viewModel.persistCurrentTime * 1000f
-                totalTimeMs = viewModel.persistTotalTimeMs.toFloat()
-
-                mediaPlayerHost.pause()
-                shouldRestorePosition = true
-
-                log(tag = "MEDIA") { "Same Url" }
-                // AudioPlayer re-enters composition -> CMPAudioPlayer creates new native player
-                // -> TotalTimeChange fires -> pendingSeek triggers seekTo(savedPosition)
-                // DON'T call play() -- user should press play manually to resume
-            } else {
-
-                // New ayat - fresh load
-                smoothProgressMs = 0f
-                totalTimeMs = 0f
-/*
-                mediaPlayerHost.pause()
-                yield()*/
-                mediaPlayerHost.loadUrl(state.playingAyat.audioUrl)
-                viewModel.lastLoadedAudioUrl = state.playingAyat.audioUrl
-                delay(100)
-                mediaPlayerHost.play()
-            }
-        } else {
-           /* mediaPlayerHost.pause()*/
-        }
-    }
-
-    // Pre-load next ayat audio to warm the network cache (no host swap)
-    /*LaunchedEffect(state.nextAyatAudioUrl) {
+    // Pre-load next ayat audio to warm the network cache
+    LaunchedEffect(state.nextAyatAudioUrl) {
         val nextUrl = state.nextAyatAudioUrl
         if (nextUrl != null) {
             preBufferHost.loadUrl(nextUrl)
             preBufferHost.pause()
         }
-    }*/
+    }
+
     // Scroll to specific ayat when navigated from search results
     val scrollTarget = scrollToAyat
     LaunchedEffect(scrollTarget, state.surahDetail) {
@@ -174,30 +92,18 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
         }
     }
 
-    // Fully independent progress ticker at ~60fps
-    // Starts from current smoothProgressMs, advances by real elapsed time
-    LaunchedEffect(isPlaying, isBuffering) {
-        if (!isPlaying || isBuffering) return@LaunchedEffect
-        val startWallClock = Clock.System.now().toEpochMilliseconds()
-        val startProgress = smoothProgressMs
-        while (true) {
-            delay(16L)
-            val elapsed = Clock.System.now().toEpochMilliseconds() - startWallClock
-            val rawProgress = startProgress + elapsed
-            smoothProgressMs = if (totalTimeMs > 0f) rawProgress.coerceAtMost(totalTimeMs) else rawProgress
-            viewModel.persistSmoothProgressMs = smoothProgressMs.toLong()
+    // Auto-scroll to active playing ayat
+    LaunchedEffect(state.playingAyat) {
+        state.playingAyat?.let { activeAyat ->
+            val index = state.surahDetail?.ayat?.indexOf(activeAyat) ?: -1
+            if (index != -1) {
+                listState.animateScrollToItem(index)
+            }
         }
     }
 
     Box(modifier = Modifier.size(0.dp)) {
         AudioPlayer(playerHost = mediaPlayerHost)
-    }
-
-    DisposableEffect(mediaPlayerHost) {
-        onDispose {
-            viewModel.persistCurrentTime = currentTime
-            mediaPlayerHost.pause()
-        }
     }
 
     DisposableEffect(preBufferHost) {
@@ -250,60 +156,50 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
                     )
                 }
                 is QuranDetailAnimState.Success -> Box(modifier = Modifier.fillMaxSize()) {
-                LazyColumn(
-                    state = listState,
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(bottom = if (state.playingAyat != null) 160.dp else 16.dp)
-                ) {
-                    val ayatList = state.surahDetail?.ayat ?: emptyList()
-                    itemsIndexed(ayatList) { index, ayat ->
-                        AyatCard(
-                            ayat = ayat,
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize(),
+                        contentPadding = PaddingValues(bottom = if (state.playingAyat != null) 160.dp else 16.dp)
+                    ) {
+                        val ayatList = state.surahDetail?.ayat ?: emptyList()
+                        itemsIndexed(ayatList) { index, ayat ->
+                            AyatCard(
+                                ayat = ayat,
+                                onOptionsClick = { action(QuranDetailEvent.OnAyatClicked(ayat)) },
+                                isActive = (ayat == state.playingAyat)
+                            )
+                        }
+                    }
 
-                            onOptionsClick = { action(QuranDetailEvent.OnAyatClicked(ayat)) }
+                    if (state.selectedAyatForOptions != null) {
+                        AyatOptionsSheet(
+                            ayat = state.selectedAyatForOptions,
+                            onDismissRequest = { action(QuranDetailEvent.OnCloseOptionsSheet) },
+                            onPlayAudio = {
+                                action(QuranDetailEvent.PlayAudio(state.selectedAyatForOptions))
+                                action(QuranDetailEvent.OnCloseOptionsSheet)
+                            },
+                            onBookmark = { action(QuranDetailEvent.OnBookmarkClicked(state.selectedAyatForOptions)) },
+                            onShare = { action(QuranDetailEvent.OnShareClicked(state.selectedAyatForOptions)) },
+                            onCopy = { action(QuranDetailEvent.OnCopyClicked(state.selectedAyatForOptions)) }
                         )
                     }
-                }
 
-                if (state.selectedAyatForOptions != null) {
-                    AyatOptionsSheet(
-                        ayat = state.selectedAyatForOptions,
-                        onDismissRequest = { action(QuranDetailEvent.OnCloseOptionsSheet) },
-                        onPlayAudio = {
-                            action(QuranDetailEvent.PlayAudio(state.selectedAyatForOptions))
-                            action(QuranDetailEvent.OnCloseOptionsSheet)
-                        },
-                        onBookmark = { action(QuranDetailEvent.OnBookmarkClicked(state.selectedAyatForOptions)) },
-                        onShare = { action(QuranDetailEvent.OnShareClicked(state.selectedAyatForOptions)) },
-                        onCopy = { action(QuranDetailEvent.OnCopyClicked(state.selectedAyatForOptions)) }
-                    )
-                }
-
-                if (state.playingAyat != null) {
-                    AudioPlayerBar(
-                        surahName = state.surahDetail?.namaLatin ?: "",
-                        reciterName = "Misyari Rasyid",
-                        isPlaying = isPlaying,
-                        isBuffering = isBuffering,
-                        elapsedMs = smoothProgressMs.toLong(),
-                        totalDurationMs = totalTimeMs.toLong(),
-                        onPlayPause = {
-                            if (isPlaying) {
-                                mediaPlayerHost.pause()
-                            } else {
-                                pendingSeek?.let { seconds ->
-                                    log(tag = "MEDIA") { "Seek to $seconds" }
-                                    mediaPlayerHost.seekTo(seconds)
-                                    pendingSeek = null
-                                }
-                                mediaPlayerHost.play()
-                            }
-                        },
-                        onNext = { action(QuranDetailEvent.PlayNextAyat) },
-                        onPrev = { action(QuranDetailEvent.PlayPrevAyat) },
-                        modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)
-                    )
-                }
+                    if (state.playingAyat != null) {
+                        AudioPlayerBar(
+                            surahName = state.surahDetail?.namaLatin ?: "",
+                            reciterName = "Misyari Rasyid",
+                            isPlaying = state.isPlaying,
+                            isBuffering = state.isBuffering,
+                            currentTimeMs = state.currentTimeMs,
+                            totalDurationMs = state.totalTimeMs,
+                            onSeek = { action(QuranDetailEvent.OnSeekAudio(it)) },
+                            onPlayPause = { action(QuranDetailEvent.TogglePlayPause) },
+                            onNext = { action(QuranDetailEvent.PlayNextAyat) },
+                            onPrev = { action(QuranDetailEvent.PlayPrevAyat) },
+                            modifier = Modifier.align(Alignment.BottomCenter).padding(bottom = 16.dp)
+                        )
+                    }
                 }
             }
         }
