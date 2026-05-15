@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
 import chaintech.videoplayer.host.MediaPlayerEvent
@@ -18,6 +18,7 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.RamadhanS
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.SnackBarData
 import com.iqbalwork.ramadhancamp.shared.common.ui.utils.TextResource
 import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
+import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
 import ramadhancamp.composeapp.generated.resources.Res
 import ramadhancamp.composeapp.generated.resources.image_danger_error
 
@@ -161,7 +162,7 @@ class QuranDetailViewModel(
                             surahId = surahDetail.number,
                             surahName = surahDetail.namaLatin,
                             ayatNumber = event.ayat.nomorAyat,
-                            readDate = kotlinx.datetime.Clock.System.now().toString()
+                            readDate = getCurrentDateLocalized()
                         )
                     )
                 }
@@ -174,11 +175,37 @@ class QuranDetailViewModel(
                 if (state.value.isPlaying) {
                     mediaPlayerHost.pause()
                 } else {
-                    pendingSeekMs?.let {
-                        mediaPlayerHost.seekTo(it / 1000f)
-                        pendingSeekMs = null
+                    val url = state.value.playingAyat?.audioUrl
+                    if (url != null && url != lastLoadedAudioUrl) {
+                        mediaPlayerHost.loadUrl(url)
+                        lastLoadedAudioUrl = url
+                        viewModelScope.launch {
+                            delay(100)
+                            pendingSeekMs?.let {
+                                val seekPos = if (it >= state.value.totalTimeMs) 0f else it / 1000f
+                                mediaPlayerHost.seekTo(seekPos)
+                                if (seekPos == 0f) updateState { copy(currentTimeMs = 0L) }
+                                pendingSeekMs = null
+                            }
+                            mediaPlayerHost.play()
+                        }
+                    } else {
+                        pendingSeekMs?.let {
+                            val seekPos = if (it >= state.value.totalTimeMs) 0f else it / 1000f
+                            mediaPlayerHost.seekTo(seekPos)
+                            if (seekPos == 0f) updateState { copy(currentTimeMs = 0L) }
+                            pendingSeekMs = null
+                        }
+                        // If player is at the end (STATE_ENDED), dispatch PlayAudio to reuse its working replay path
+                        if (state.value.currentTimeMs >= state.value.totalTimeMs && state.value.totalTimeMs > 0L) {
+                            val ayat = state.value.playingAyat
+                            if (ayat != null) {
+                                handleEvent(QuranDetailEvent.PlayAudio(ayat))
+                            }
+                        } else {
+                            mediaPlayerHost.play()
+                        }
                     }
-                    mediaPlayerHost.play()
                 }
             }
             is QuranDetailEvent.PlayNextAyat -> {
@@ -219,7 +246,7 @@ class QuranDetailViewModel(
                             surahId = event.surahId,
                             surahName = event.surahName,
                             ayatNumber = event.ayatNumber,
-                            readDate = kotlinx.datetime.Clock.System.now().toString()
+                            readDate = getCurrentDateLocalized()
                         )
                     )
                 }
@@ -260,6 +287,7 @@ class QuranDetailViewModel(
             is QuranDetailEvent.OnScreenDispose -> {
                 // Save current time, unless we already had a pending seek that wasn't consumed
                 pendingSeekMs = pendingSeekMs ?: state.value.currentTimeMs
+                lastLoadedAudioUrl = null
                 mediaPlayerHost.pause()
             }
             is QuranDetailEvent.OnScreenResume -> {
