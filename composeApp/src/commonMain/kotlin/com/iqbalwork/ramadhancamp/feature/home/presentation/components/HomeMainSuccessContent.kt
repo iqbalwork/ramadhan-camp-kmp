@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.presentation.components
+﻿package com.iqbalwork.ramadhancamp.feature.home.presentation.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,8 +25,9 @@ import ramadhancamp.composeapp.generated.resources.populer_surah
 fun HomeMainSuccessContent(
     homeMainData: HomeScreenUiModel,
     modifier: Modifier = Modifier,
-    onSearchBoxClicked: () -> Unit ,
-    onLastSurahCardClick: () -> Unit
+    onSearchBoxClicked: () -> Unit,
+    onLastSurahCardClick: () -> Unit,
+    onPopularSurahClick: (Int) -> Unit
 ) {
     Column(
         modifier = modifier
@@ -80,7 +81,7 @@ fun HomeMainSuccessContent(
         PopularSurahContainer(
             modifier = Modifier.fillMaxWidth(),
             surahList = homeMainData.popularSurahList,
-            onClick = { /* TODO: Handle popular surah click */ }
+            onClick = onPopularSurahClick
         )
     }
 }

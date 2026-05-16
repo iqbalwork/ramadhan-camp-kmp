@@ -80,24 +80,28 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
         }
     }
 
-    // Scroll to specific ayat when navigated from search results
+    // Scroll to specific ayat when navigated from search results (only once)
     val scrollTarget = scrollToAyat
     LaunchedEffect(scrollTarget, state.surahDetail) {
-        if (scrollTarget != null && state.surahDetail != null) {
+        if (!state.hasScrolledToInitialAyah && scrollTarget != null && state.surahDetail != null) {
             val index = state.surahDetail!!.ayat.indexOfFirst { it.nomorAyat == scrollTarget }
             if (index >= 0) {
                 delay(300) // wait for layout
                 listState.animateScrollToItem(index)
+                action(QuranDetailEvent.InitialScrollConsumed)
             }
         }
     }
 
-    // Auto-scroll to active playing ayat
+    // Auto-scroll to active playing ayat (only once per audio change)
     LaunchedEffect(state.playingAyat) {
-        state.playingAyat?.let { activeAyat ->
-            val index = state.surahDetail?.ayat?.indexOf(activeAyat) ?: -1
-            if (index != -1) {
-                listState.animateScrollToItem(index)
+        if (!state.autoScrolledToPlayingAyat) {
+            state.playingAyat?.let { activeAyat ->
+                val index = state.surahDetail?.ayat?.indexOf(activeAyat) ?: -1
+                if (index != -1) {
+                    listState.animateScrollToItem(index)
+                    action(QuranDetailEvent.AutoScrollToPlayingAyatConsumed)
+                }
             }
         }
     }

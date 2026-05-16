@@ -137,7 +137,8 @@ class QuranDetailViewModel(
                         playingAyat = event.ayat, 
                         nextAyatAudioUrl = nextUrl,
                         isPlaying = true,
-                        isBuffering = true
+                        isBuffering = true,
+                        autoScrolledToPlayingAyat = false
                     ) 
                 }
 
@@ -295,6 +296,12 @@ class QuranDetailViewModel(
             }
             is QuranDetailEvent.OnSeekAudio -> {
                 mediaPlayerHost.seekTo(event.positionMs / 1000f)
+            }
+            is QuranDetailEvent.AutoScrollToPlayingAyatConsumed -> {
+                updateState { copy(autoScrolledToPlayingAyat = true) }
+            }
+            is QuranDetailEvent.InitialScrollConsumed -> {
+                updateState { copy(hasScrolledToInitialAyah = true) }
             }
         }
     }

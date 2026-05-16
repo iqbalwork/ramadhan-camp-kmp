@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
 
 import com.iqbalwork.ramadhancamp.feature.quran.domain.model.Ayat
 import com.iqbalwork.ramadhancamp.feature.quran.domain.model.SurahDetail
@@ -16,7 +16,9 @@ data class QuranDetailState(
     val isPlaying: Boolean = false,
     val isBuffering: Boolean = false,
     val totalTimeMs: Long = 0L,
-    val currentTimeMs: Long = 0L
+    val currentTimeMs: Long = 0L,
+    val autoScrolledToPlayingAyat: Boolean = false,
+    val hasScrolledToInitialAyah: Boolean = false
 )
 
 sealed interface QuranDetailEvent : UiEvent {
@@ -38,6 +40,8 @@ sealed interface QuranDetailEvent : UiEvent {
     data object OnScreenDispose : QuranDetailEvent
     data object OnScreenResume : QuranDetailEvent
     data class OnSeekAudio(val positionMs: Long) : QuranDetailEvent
+    data object AutoScrollToPlayingAyatConsumed : QuranDetailEvent
+    data object InitialScrollConsumed : QuranDetailEvent
 }
 
 sealed interface QuranDetailEffect : UiEffect

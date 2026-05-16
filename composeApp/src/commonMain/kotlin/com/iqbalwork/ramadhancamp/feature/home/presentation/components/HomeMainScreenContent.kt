@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.presentation.components
+﻿package com.iqbalwork.ramadhancamp.feature.home.presentation.components
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.foundation.background
@@ -65,10 +65,12 @@ fun HomeMainScreenContent(
                     onSearchBoxClicked = { action(HomeEvent.OnSearchBoxClicked) },
                     onLastSurahCardClick = {
                         action(HomeEvent.OnLastSurahClicked)
+                    },
+                    onPopularSurahClick = { surahId ->
+                        action(HomeEvent.OnPopularSurahClicked(surahId))
                     }
                 )
             }
         }
     }
 }
-

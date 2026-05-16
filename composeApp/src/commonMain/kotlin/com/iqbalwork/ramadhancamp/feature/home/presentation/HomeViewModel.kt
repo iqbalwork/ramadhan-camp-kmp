@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.home.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.home.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.home.domain.repository.HomeRepository
@@ -13,6 +13,7 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.LastSurahNavigationDa
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
+import com.iqbalwork.ramadhancamp.shared.common.navigation.SurahNavigationData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
@@ -191,7 +192,18 @@ class HomeViewModel(
                     )
                 }
             }
+            is HomeEvent.OnPopularSurahClicked -> {
+                navigationManager.switchTab(QuranTab)
+                viewModelScope.launch {
+                    delay(300)
+                    navigationManager.sendResult(
+                        NavigationResult.Success(
+                            "navigate_to_surah",
+                            SurahNavigationData(event.surahId)
+                        )
+                    )
+                }
+            }
         }
     }
 }
-

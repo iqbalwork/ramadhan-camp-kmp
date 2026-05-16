@@ -9,6 +9,7 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.LastSurahNavigationData
+import com.iqbalwork.ramadhancamp.shared.common.navigation.SurahNavigationData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
@@ -21,7 +22,7 @@ class QuranMainViewModel(
     private val quranRepository: QuranRepository
 ) : BaseViewModel<Unit, QuranMainState, QuranMainEvent, QuranMainEffect>(
     Unit, QuranMainState(), navigationManager,
-    resultKeys = arrayOf("focus_search", "navigate_to_last_ayah")
+    resultKeys = arrayOf("focus_search", "navigate_to_last_ayah", "navigate_to_surah")
 ) {
 
     private var searchJob: Job? = null
@@ -46,6 +47,15 @@ class QuranMainViewModel(
                             surahId = navData.surahId,
                             scrollToAyat = navData.ayatNumber
                         )
+                    )
+                )
+            }
+            "navigate_to_surah" -> {
+                val navData = data as? SurahNavigationData ?: return
+                navigationManager.backToScreen(TabDestination.QuranMain)
+                navigationManager.navigateToInsideTab(
+                    TabDestination.QuranDetail(
+                        QuranDetailScreenParameters(surahId = navData.surahId)
                     )
                 )
             }
