@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.shared.common.database
+package com.iqbalwork.ramadhancamp.shared.common.database
 
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -6,6 +6,7 @@ import platform.Foundation.NSDocumentDirectory
 import platform.Foundation.NSFileManager
 import platform.Foundation.NSUserDomainMask
 
+@OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 actual fun getDatabaseBuilder(): RoomDatabase.Builder<AppDatabase> {
     val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
         directory = NSDocumentDirectory,

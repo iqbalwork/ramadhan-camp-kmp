@@ -1,5 +1,7 @@
 ﻿package com.iqbalwork.ramadhancamp.feature.bookmark.presentation.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,9 +18,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Bookmark
@@ -28,11 +32,20 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 fun BookmarkCard(
     bookmark: Bookmark,
     categoryName: String,
+    isActive: Boolean = false,
+    isPlaying: Boolean = false,
     onClick: () -> Unit,
     onPlayClick: () -> Unit
 ) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
+
+    val animatedAlpha by animateFloatAsState(
+        targetValue = if (isActive) 0.4f else 1.0f,
+        animationSpec = tween(durationMillis = 800),
+        label = "borderAlpha"
+    )
+    val accentColor = colors.accentPrimary.copy(alpha = animatedAlpha)
 
     Row(
         modifier = Modifier
@@ -46,7 +59,7 @@ fun BookmarkCard(
             modifier = Modifier
                 .fillMaxHeight()
                 .width(4.dp)
-                .background(colors.accentPrimary)
+                .background(accentColor)
         )
 
         Column(
@@ -99,11 +112,17 @@ fun BookmarkCard(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Surah Info",
+                    text = "${bookmark.surahName} : ${bookmark.ayatNumber}",
                     style = typography.labelLarge,
                     color = colors.textPrimary
                 )
                 
+                val playLabel = when {
+                    isActive && isPlaying -> "\u23F8 Pause"
+                    isActive && !isPlaying -> "\u25B6 Resume"
+                    else -> "\u25B6 Play"
+                }
+
                 Box(
                     modifier = Modifier
                         .clip(RoundedCornerShape(20.dp))
@@ -112,7 +131,7 @@ fun BookmarkCard(
                         .padding(horizontal = 12.dp, vertical = 6.dp)
                 ) {
                     Text(
-                        text = "Play",
+                        text = playLabel,
                         style = typography.labelLarge,
                         color = colors.accentPrimary
                     )

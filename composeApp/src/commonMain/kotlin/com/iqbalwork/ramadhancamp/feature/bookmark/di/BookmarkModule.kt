@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.bookmark.di
+﻿package com.iqbalwork.ramadhancamp.feature.bookmark.di
 
 import com.iqbalwork.ramadhancamp.feature.bookmark.data.repositories.BookmarkRepositoryImpl
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.repository.BookmarkRepository
@@ -22,7 +22,8 @@ val bookmarkModule = module {
             navigationManager = get<NavigationManager> {
                 parametersOf(params.get<BackStackNode>(), params.get<TabState>())
             },
-            bookmarkRepository = get()
+            bookmarkRepository = get(),
+            audioController = get()
         )
     }
 }

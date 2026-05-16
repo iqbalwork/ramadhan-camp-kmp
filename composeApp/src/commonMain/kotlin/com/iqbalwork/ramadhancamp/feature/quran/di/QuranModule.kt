@@ -21,7 +21,7 @@ val quranModule = module {
     factoryOf(::QuranRemoteDatasource)
     factoryOf(::QuranRepositoryImpl) bind QuranRepository::class
 
-    viewModel { params ->
+    viewModel<QuranMainViewModel> { params ->
         QuranMainViewModel(
             navigationManager = get<NavigationManager> {
                 parametersOf(params.get<BackStackNode>(), params.get<TabState>())
@@ -30,7 +30,7 @@ val quranModule = module {
         )
     }
 
-    viewModel { params ->
+    viewModel<QuranDetailViewModel> { params ->
         QuranDetailViewModel(
             params = params.get<QuranDetailScreenParameters>(),
             navigationManager = get<NavigationManager> {
@@ -38,11 +38,12 @@ val quranModule = module {
             },
             quranRepository = get(),
             shareManager = get(),
-            updateLastSurahRead = get()
+            updateLastSurahRead = get(),
+            audioController = get()
         )
     }
 
-    viewModel { params ->
+    viewModel<QuranSheetViewModel> { params ->
         QuranSheetViewModel(
             params = params.get<QuranSheetScreenParameters>(),
             navigationManager = get<NavigationManager> {

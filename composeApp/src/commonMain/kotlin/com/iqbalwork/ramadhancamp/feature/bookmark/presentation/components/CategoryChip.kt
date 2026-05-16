@@ -1,8 +1,9 @@
-package com.iqbalwork.ramadhancamp.feature.bookmark.presentation.components
+﻿package com.iqbalwork.ramadhancamp.feature.bookmark.presentation.components
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -14,11 +15,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun CategoryChip(
     name: String,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: (() -> Unit)? = null
 ) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
@@ -34,7 +37,10 @@ fun CategoryChip(
     Box(
         modifier = modifier
             .clip(RoundedCornerShape(16.dp))
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(

@@ -1,20 +1,17 @@
 package com.iqbalwork.ramadhancamp.feature.bookmark.presentation.route
 
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
 import androidx.navigation3.runtime.EntryProviderScope
 import androidx.navigation3.runtime.NavKey
-import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkDetailScreen
-import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkMainScreen
-import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkSheetScreen
-import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkSubDetailScreen
-import com.iqbalwork.ramadhancamp.shared.common.ui.components.bottomSheet.BottomSheetSceneStrategy
+import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkCreateCategorySheet
+import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.BookmarkScreen
 import com.iqbalwork.ramadhancamp.shared.common.navigation.BackStackNode
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.FeatureTab
-import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalBackStackNode
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.rememberTabBackStack
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.bottomSheet.BottomSheetSceneStrategy
+import androidx.compose.material3.ExperimentalMaterial3Api
 import org.jetbrains.compose.resources.DrawableResource
 import ramadhancamp.composeapp.generated.resources.Res
 import ramadhancamp.composeapp.generated.resources.ic_filled_bookmark_tab
@@ -31,12 +28,17 @@ object BookmarkTab : FeatureTab() {
     override fun backstack(): BackStackNode = rememberTabBackStack(initialDestination, label)
 
     override fun EntryProviderScope<NavKey>.registerEntries() {
-        entry<TabDestination.BookmarkMain>      { BookmarkMainScreen() }
-        entry<TabDestination.BookmarkDetail>    { BookmarkDetailScreen() }
-        entry<TabDestination.BookmarkSubDetail> { BookmarkSubDetailScreen() }
-        entry<DialogDestination.BookmarkSheet>(metadata = BottomSheetSceneStrategy.bottomSheet()) {
-            val backStack = LocalBackStackNode.current.backStack
-            BookmarkSheetScreen(onDismiss = { backStack.removeLastOrNull() })
+        entry<TabDestination.BookmarkMain> { BookmarkScreen() }
+
+        entry<DialogDestination.BookmarkCreateCategory>(
+            metadata = BottomSheetSceneStrategy.bottomSheet(
+                containerColor = androidx.compose.ui.graphics.Color(0xFF1A2E28)
+            )
+        ) {
+            BookmarkCreateCategorySheet()
         }
     }
 }
+
+
+

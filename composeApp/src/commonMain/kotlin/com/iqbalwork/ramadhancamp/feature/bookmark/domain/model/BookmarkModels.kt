@@ -9,5 +9,9 @@ data class Bookmark(
     val id: Long,
     val ayahDetails: String,
     val categoryId: Long,
-    val timestamp: Long
+    val timestamp: Long,
+    val surahId: Int,
+    val ayatNumber: Int,
+    val surahName: String,
+    val audioUrl: String
 )
