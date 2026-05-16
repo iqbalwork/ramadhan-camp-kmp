@@ -234,7 +234,8 @@ class QuranDetailViewModel(
                     surahName = state.value.surahDetail?.namaLatin ?: "",
                     teksArab = event.ayat.teksArab,
                     teksLatin = event.ayat.teksLatin,
-                    teksIndonesia = event.ayat.teksIndonesia
+                    teksIndonesia = event.ayat.teksIndonesia,
+                    audioUrl = event.ayat.audioUrl
                 )
                 navigationManager.showDialog(DialogDestination.QuranSheet(params))
             }
@@ -281,3 +282,5 @@ class QuranDetailViewModel(
         }
     }
 }
+
+

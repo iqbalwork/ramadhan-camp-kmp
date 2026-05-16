@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation.route
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.route
 
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
@@ -33,12 +33,11 @@ object QuranTab : FeatureTab() {
         entry<TabDestination.QuranDetail>    { QuranDetailScreen(it.param) }
         entry<DialogDestination.QuranSheet>(
             metadata = BottomSheetSceneStrategy.bottomSheet(
-                containerColor = androidx.compose.ui.graphics.Color(0xFF10221D)
+                containerColor = androidx.compose.ui.graphics.Color(0xFF10221D),
+                skipPartiallyExpanded = true
             )
         ) {
             QuranSheetScreen(it.param)
         }
     }
 }
-
-

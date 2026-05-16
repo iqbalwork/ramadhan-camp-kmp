@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.bookmark.domain.model
+package com.iqbalwork.ramadhancamp.feature.bookmark.domain.model
 
 data class Category(
     val id: Long,
@@ -13,5 +13,7 @@ data class Bookmark(
     val surahId: Int,
     val ayatNumber: Int,
     val surahName: String,
-    val audioUrl: String
+    val audioUrl: String,
+    val teksArab: String = "",
+    val teksIndonesia: String = ""
 )

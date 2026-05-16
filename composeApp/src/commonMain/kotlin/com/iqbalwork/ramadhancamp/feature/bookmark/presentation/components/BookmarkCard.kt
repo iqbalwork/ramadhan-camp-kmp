@@ -22,7 +22,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Bookmark
@@ -72,22 +71,40 @@ fun BookmarkCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth()
             ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .clip(RoundedCornerShape(4.dp))
+                            .background(colors.bgSurface)
+                            .padding(horizontal = 8.dp, vertical = 4.dp)
+                    ) {
+                        Text(
+                            text = bookmark.surahName,
+                            style = typography.labelSmall,
+                            color = colors.accentPrimary
+                        )
+                    }
+                    Text(
+                        text = "Ayah ${bookmark.ayatNumber}",
+                        style = typography.labelSmall,
+                        color = colors.textSecondary
+                    )
+                }
+
                 Text(
                     text = categoryName,
                     style = typography.labelSmall,
                     color = colors.textMuted
                 )
-                Text(
-                    text = "B",
-                    color = colors.accentPrimary,
-                    style = typography.labelLarge
-                )
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = bookmark.ayahDetails,
+                text = bookmark.teksArab,
                 style = typography.headlineLarge,
                 color = colors.textPrimary,
                 textAlign = TextAlign.End,
@@ -97,26 +114,20 @@ fun BookmarkCard(
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
-                text = "Translation here...",
+                text = bookmark.teksIndonesia,
                 style = typography.bodyLarge,
                 color = colors.textSecondary,
                 textAlign = TextAlign.Start,
                 modifier = Modifier.fillMaxWidth()
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween,
+                horizontalArrangement = Arrangement.End,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text(
-                    text = "${bookmark.surahName} : ${bookmark.ayatNumber}",
-                    style = typography.labelLarge,
-                    color = colors.textPrimary
-                )
-                
                 val playLabel = when {
                     isActive && isPlaying -> "\u23F8 Pause"
                     isActive && !isPlaying -> "\u25B6 Resume"
@@ -128,7 +139,7 @@ fun BookmarkCard(
                         .clip(RoundedCornerShape(20.dp))
                         .background(colors.accentPrimary.copy(alpha = 0.2f))
                         .clickable(onClick = onPlayClick)
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
                 ) {
                     Text(
                         text = playLabel,

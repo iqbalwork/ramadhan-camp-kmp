@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import com.iqbalwork.ramadhancamp.shared.common.ui.ScreenUiParams
 import kotlinx.serialization.Serializable
@@ -10,5 +10,6 @@ data class QuranSheetScreenParameters(
     val surahName: String,
     val teksArab: String,
     val teksLatin: String,
-    val teksIndonesia: String
+    val teksIndonesia: String,
+    val audioUrl: String = ""
 ) : ScreenUiParams()

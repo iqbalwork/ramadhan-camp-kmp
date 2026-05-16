@@ -26,6 +26,9 @@ class BookmarkRepositoryImpl(
     }
 
     override fun searchBookmarks(query: String): Flow<List<Bookmark>> {
+        if (query.isBlank()) {
+            return getAllBookmarks()
+        }
         return dao.searchBookmarks(query).map { list ->
             list.map { it.toDomain() }
         }
@@ -55,7 +58,9 @@ class BookmarkRepositoryImpl(
         surahId = surahId,
         ayatNumber = ayatNumber,
         surahName = surahName,
-        audioUrl = audioUrl
+        audioUrl = audioUrl,
+        teksArab = teksArab,
+        teksIndonesia = teksIndonesia
     )
 
     private fun Bookmark.toEntity() = BookmarkEntity(
@@ -66,7 +71,9 @@ class BookmarkRepositoryImpl(
         surahId = surahId,
         ayatNumber = ayatNumber,
         surahName = surahName,
-        audioUrl = audioUrl
+        audioUrl = audioUrl,
+        teksArab = teksArab,
+        teksIndonesia = teksIndonesia
     )
 
     private fun CategoryEntity.toDomain() = Category(
