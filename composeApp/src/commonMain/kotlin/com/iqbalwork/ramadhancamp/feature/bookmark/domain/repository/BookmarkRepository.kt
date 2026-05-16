@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.bookmark.domain.repository
+package com.iqbalwork.ramadhancamp.feature.bookmark.domain.repository
 
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Bookmark
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Category
@@ -11,4 +11,5 @@ interface BookmarkRepository {
     suspend fun addBookmark(bookmark: Bookmark): Long
     suspend fun addCategory(category: Category): Long
     suspend fun deleteBookmark(id: Long)
+    suspend fun deleteCategory(id: Long)
 }

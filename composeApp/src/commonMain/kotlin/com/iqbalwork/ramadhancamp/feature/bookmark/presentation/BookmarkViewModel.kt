@@ -1,54 +1,65 @@
-package com.iqbalwork.ramadhancamp.feature.bookmark.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.bookmark.presentation
 
 import androidx.lifecycle.viewModelScope
+import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Category
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.repository.BookmarkRepository
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.model.BookmarkEffect
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.model.BookmarkEvent
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.model.BookmarkState
-import com.iqbalwork.ramadhancamp.feature.home.presentation.route.HomeTab
+import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranDetailScreenParameters
+import com.iqbalwork.ramadhancamp.feature.quran.presentation.route.QuranTab
+import com.iqbalwork.ramadhancamp.shared.common.audio.AudioController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
-import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
-import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResultData
 import com.iqbalwork.ramadhancamp.shared.common.navigation.TabDestination
-import com.iqbalwork.ramadhancamp.shared.common.navigation.TextResult
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 
 @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
 class BookmarkViewModel(
     navigationManager: NavigationManager,
-    private val bookmarkRepository: BookmarkRepository
+    private val bookmarkRepository: BookmarkRepository,
+    private val audioController: AudioController
 ) : BaseViewModel<Unit, BookmarkState, BookmarkEvent, BookmarkEffect>(
-    Unit, BookmarkState(), navigationManager,
-    resultKeys = arrayOf("bookmark_result")
+    Unit, BookmarkState(), navigationManager
 ) {
     private val searchQueryFlow = MutableStateFlow("")
-
-    private val _lastResult = MutableStateFlow<String?>(null)
-    val lastResult: StateFlow<String?> = _lastResult.asStateFlow()
 
     init {
         loadCategories()
         observeBookmarks()
+        observeAudioState()
     }
 
-    override fun navigationResultSuccess(key: String, data: NavigationResultData?) {
-        super.navigationResultSuccess(key, data)
-        if (key == "bookmark_result") {
-            _lastResult.value = (data as? TextResult)?.text
-        }
+    private fun observeAudioState() {
+        audioController.isPlaying.onEach { isPlaying ->
+            updateState { copy(isPlaying = isPlaying) }
+        }.launchIn(viewModelScope)
+
+        audioController.currentTimeMs.onEach { ms ->
+            updateState { copy(currentTimeMs = ms) }
+        }.launchIn(viewModelScope)
+
+        audioController.totalTimeMs.onEach { ms ->
+            updateState { copy(totalTimeMs = ms) }
+        }.launchIn(viewModelScope)
+
+        audioController.isBuffering.onEach { isBuffering ->
+            updateState { copy(isBuffering = isBuffering) }
+        }.launchIn(viewModelScope)
+
+        audioController.mediaEnded.onEach {
+            audioController.stop()
+            updateState { copy(playingBookmark = null, isPlaying = false, currentTimeMs = 0L) }
+        }.launchIn(viewModelScope)
     }
 
     private fun loadCategories() {
@@ -89,50 +100,78 @@ class BookmarkViewModel(
                 searchQueryFlow.value = state.value.searchQuery
             }
             is BookmarkEvent.OnAddBookmarkClick -> {
-                // Handle add
+                navigationManager.showDialog(DialogDestination.BookmarkCreateCategory)
+            }
+            is BookmarkEvent.OnDeleteCategoryClicked -> {
+                updateState { copy(categoryToDelete = event.category) }
+            }
+            is BookmarkEvent.ConfirmDeleteCategory -> {
+                val category = state.value.categoryToDelete ?: return
+                viewModelScope.launch {
+                    bookmarkRepository.deleteCategory(category.id)
+                    // If the deleted category was selected, reset filter
+                    if (state.value.selectedCategoryId == category.id) {
+                        updateState { copy(selectedCategoryId = null) }
+                    }
+                    updateState { copy(categoryToDelete = null) }
+                }
+            }
+            is BookmarkEvent.DismissDeleteCategory -> {
+                updateState { copy(categoryToDelete = null) }
             }
             is BookmarkEvent.OnBookmarkClick -> {
-                // Handle bookmark click
+                val bookmark = event.bookmark
+                navigationManager.switchTab(QuranTab)
+                navigationManager.navigateToInsideTab(
+                    TabDestination.QuranDetail(
+                        QuranDetailScreenParameters(
+                            surahId = bookmark.surahId,
+                            scrollToAyat = bookmark.ayatNumber
+                        )
+                    )
+                )
             }
             is BookmarkEvent.OnPlayClick -> {
-                // Handle play click
+                val bookmark = event.bookmark
+                if (state.value.playingBookmark?.id == bookmark.id) {
+                    if (state.value.isPlaying) {
+                        audioController.pause()
+                    } else {
+                        audioController.play()
+                    }
+                } else {
+                    updateState {
+                        copy(
+                            playingBookmark = bookmark,
+                            isPlaying = true,
+                            isBuffering = true,
+                            currentTimeMs = 0L,
+                            totalTimeMs = 0L
+                        )
+                    }
+                    val url = bookmark.audioUrl
+                    if (url == audioController.lastLoadedUrl.value) {
+                        audioController.seekToZero()
+                        audioController.play()
+                    } else {
+                        audioController.loadUrl(url)
+                        viewModelScope.launch {
+                            kotlinx.coroutines.delay(100)
+                            audioController.play()
+                        }
+                    }
+                }
+            }
+            is BookmarkEvent.TogglePlayPause -> {
+                if (state.value.isPlaying) {
+                    audioController.pause()
+                } else if (state.value.playingBookmark != null) {
+                    audioController.play()
+                }
+            }
+            is BookmarkEvent.OnSeekAudio -> {
+                audioController.seekTo(event.positionMs)
             }
         }
-    }
-
-    fun navigateToDetail() {
-        navigationManager.navigateToInsideTab(TabDestination.BookmarkDetail)
-    }
-
-    fun replaceWithDetail() {
-        navigationManager.navigateToInsideTab(TabDestination.BookmarkDetail, withReplace = true)
-    }
-
-    fun switchToHome() {
-        navigationManager.switchTab(HomeTab)
-    }
-
-    fun showBookmarkSheet() {
-        navigationManager.showDialog(DialogDestination.BookmarkSheet)
-    }
-
-    fun navigateToSubDetail() {
-        navigationManager.navigateToInsideTab(TabDestination.BookmarkSubDetail)
-    }
-
-    fun back() {
-        navigationManager.back()
-    }
-
-    fun backWithResult() {
-        navigationManager.back(NavigationResult.Success("bookmark_result", TextResult("Hello from Detail!")))
-    }
-
-    fun backToMain() {
-        navigationManager.backToScreen(TabDestination.BookmarkMain)
-    }
-
-    fun backToMainWithResult() {
-        navigationManager.backToScreen(TabDestination.BookmarkMain, NavigationResult.Success("bookmark_result", TextResult("Hello from SubDetail!")))
     }
 }

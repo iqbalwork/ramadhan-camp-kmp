@@ -1,10 +1,17 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
+package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Pause
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.SkipNext
+import androidx.compose.material.icons.filled.SkipPrevious
 import androidx.compose.material3.Icon
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -14,12 +21,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Pause
-import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.SkipNext
-import androidx.compose.material.icons.filled.SkipPrevious
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
+import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @Composable
 fun AudioPlayerBar(
@@ -31,8 +35,8 @@ fun AudioPlayerBar(
     isBuffering: Boolean = false,
     onSeek: (Long) -> Unit,
     onPlayPause: () -> Unit,
-    onNext: () -> Unit,
-    onPrev: () -> Unit,
+    onNext: (() -> Unit)? = null,
+    onPrev: (() -> Unit)? = null,
     modifier: Modifier = Modifier
 ) {
     val colors = RamadhanTheme.colors
@@ -44,7 +48,7 @@ fun AudioPlayerBar(
 
     // Sync smooth progress when currentTimeMs from ViewModel updates significantly
     LaunchedEffect(currentTimeMs) {
-        if (!isDraggingSlider && kotlin.math.abs(smoothProgressMs - currentTimeMs) > 1500f) {
+        if (!isDraggingSlider && abs(smoothProgressMs - currentTimeMs) > 1500f) {
             smoothProgressMs = currentTimeMs.toFloat()
         }
     }
@@ -99,14 +103,16 @@ fun AudioPlayerBar(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Icon(
-                    imageVector = Icons.Default.SkipPrevious,
-                    contentDescription = "Previous",
-                    tint = colors.textPrimary,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clickable { onPrev() }
-                )
+                if (onPrev != null) {
+                    Icon(
+                        imageVector = Icons.Default.SkipPrevious,
+                        contentDescription = "Previous",
+                        tint = colors.textPrimary,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { onPrev() }
+                    )
+                }
 
                 Box(
                     modifier = Modifier
@@ -124,14 +130,16 @@ fun AudioPlayerBar(
                     )
                 }
 
-                Icon(
-                    imageVector = Icons.Default.SkipNext,
-                    contentDescription = "Next",
-                    tint = colors.textPrimary,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clickable { onNext() }
-                )
+                if (onNext != null) {
+                    Icon(
+                        imageVector = Icons.Default.SkipNext,
+                        contentDescription = "Next",
+                        tint = colors.textPrimary,
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clickable { onNext() }
+                    )
+                }
             }
         }
 
@@ -180,7 +188,7 @@ fun AudioPlayerBar(
                 )
             )
         } else {
-            androidx.compose.material3.LinearProgressIndicator(
+            LinearProgressIndicator(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(8.dp),

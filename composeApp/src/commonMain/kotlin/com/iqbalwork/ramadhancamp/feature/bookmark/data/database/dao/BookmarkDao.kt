@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.dao
+package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
@@ -27,4 +27,7 @@ interface BookmarkDao {
 
     @Query("DELETE FROM bookmark WHERE id = :id")
     suspend fun deleteBookmark(id: Long)
+
+    @Query("DELETE FROM category WHERE id = :id")
+    suspend fun deleteCategory(id: Long)
 }

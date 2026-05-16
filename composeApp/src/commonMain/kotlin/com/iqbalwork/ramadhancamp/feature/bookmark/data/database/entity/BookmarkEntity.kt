@@ -1,10 +1,10 @@
-package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.entity
+﻿package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.entity
 
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import androidx.room.ForeignKey
 import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
 import androidx.room.Index
+import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "bookmark",
@@ -27,5 +27,13 @@ data class BookmarkEntity(
     @ColumnInfo(name = "category_id")
     val categoryId: Long,
     @ColumnInfo(name = "timestamp")
-    val timestamp: Long
+    val timestamp: Long,
+    @ColumnInfo(name = "surah_id")
+    val surahId: Int,
+    @ColumnInfo(name = "ayat_number")
+    val ayatNumber: Int,
+    @ColumnInfo(name = "surah_name")
+    val surahName: String,
+    @ColumnInfo(name = "audio_url")
+    val audioUrl: String
 )

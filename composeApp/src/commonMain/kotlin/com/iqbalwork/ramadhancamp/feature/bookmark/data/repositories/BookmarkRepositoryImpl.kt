@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.bookmark.data.repositories
+package com.iqbalwork.ramadhancamp.feature.bookmark.data.repositories
 
 import com.iqbalwork.ramadhancamp.feature.bookmark.data.database.dao.BookmarkDao
 import com.iqbalwork.ramadhancamp.feature.bookmark.data.database.entity.BookmarkEntity
@@ -43,18 +43,30 @@ class BookmarkRepositoryImpl(
         dao.deleteBookmark(id)
     }
 
+    override suspend fun deleteCategory(id: Long) {
+        dao.deleteCategory(id)
+    }
+
     private fun BookmarkEntity.toDomain() = Bookmark(
         id = id,
         ayahDetails = ayahDetails,
         categoryId = categoryId,
-        timestamp = timestamp
+        timestamp = timestamp,
+        surahId = surahId,
+        ayatNumber = ayatNumber,
+        surahName = surahName,
+        audioUrl = audioUrl
     )
 
     private fun Bookmark.toEntity() = BookmarkEntity(
         id = id,
         ayahDetails = ayahDetails,
         categoryId = categoryId,
-        timestamp = timestamp
+        timestamp = timestamp,
+        surahId = surahId,
+        ayatNumber = ayatNumber,
+        surahName = surahName,
+        audioUrl = audioUrl
     )
 
     private fun CategoryEntity.toDomain() = Category(

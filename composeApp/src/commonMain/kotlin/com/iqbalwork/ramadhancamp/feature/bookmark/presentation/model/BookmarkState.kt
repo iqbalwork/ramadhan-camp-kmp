@@ -8,5 +8,11 @@ data class BookmarkState(
     val selectedCategoryId: Long? = null,
     val categories: List<Category> = emptyList(),
     val bookmarks: List<Bookmark> = emptyList(),
-    val isLoading: Boolean = false
+    val isLoading: Boolean = false,
+    val playingBookmark: Bookmark? = null,
+    val isPlaying: Boolean = false,
+    val isBuffering: Boolean = false,
+    val currentTimeMs: Long = 0L,
+    val totalTimeMs: Long = 0L,
+    val categoryToDelete: Category? = null
 )
