@@ -17,7 +17,7 @@ val bookmarkModule = module {
     factory { get<AppDatabase>().bookmarkDao() }
     factoryOf(::BookmarkRepositoryImpl) bind BookmarkRepository::class
 
-    viewModel { params ->
+    viewModel<BookmarkViewModel> { params ->
         BookmarkViewModel(
             navigationManager = get<NavigationManager> {
                 parametersOf(params.get<BackStackNode>(), params.get<TabState>())

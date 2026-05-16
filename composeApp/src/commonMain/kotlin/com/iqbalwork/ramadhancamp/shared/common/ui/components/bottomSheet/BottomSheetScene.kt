@@ -61,6 +61,7 @@ class BottomSheetSceneStrategy<T : Any>(
         return bottomSheetProperties?.let { properties ->
             val containerColor = metadata?.get(CONTAINER_COLOR_KEY) as? Color ?: Color.Transparent
             val dragHandle = metadata?.get(DRAG_HANDLE_KEY) as? (@Composable () -> Unit)
+            val skipPartiallyExpanded = metadata?.get(SKIP_PARTIALLY_EXPANDED_KEY) as? Boolean ?: false
             @Suppress("UNCHECKED_CAST")
             BottomSheetScene(
                 key = lastEntry.contentKey as T,
@@ -70,7 +71,9 @@ class BottomSheetSceneStrategy<T : Any>(
                 modalBottomSheetProperties = properties,
                 containerColor = containerColor,
                 dragHandle = dragHandle,
-                sheetStateFactory = { rememberModalBottomSheetState() },
+                sheetStateFactory = {
+                    rememberModalBottomSheetState(skipPartiallyExpanded = skipPartiallyExpanded)
+                },
                 onBack = onBack,
             )
         }
@@ -85,21 +88,25 @@ class BottomSheetSceneStrategy<T : Any>(
          * [ModalBottomSheet].
          * @param containerColor optional background color for the bottom sheet.
          * @param dragHandle optional composable for the drag handle of the bottom sheet.
+         * @param skipPartiallyExpanded whether to skip the partially expanded state.
          */
         @OptIn(ExperimentalMaterial3Api::class)
         fun bottomSheet(
             modalBottomSheetProperties: ModalBottomSheetProperties = ModalBottomSheetProperties(),
             containerColor: Color? = null,
             dragHandle: @Composable (() -> Unit)? = null,
+            skipPartiallyExpanded: Boolean = false,
         ): Map<String, Any> {
             val map = mutableMapOf<String, Any>(BOTTOM_SHEET_KEY to modalBottomSheetProperties)
             containerColor?.let { map[CONTAINER_COLOR_KEY] = it }
             dragHandle?.let { map[DRAG_HANDLE_KEY] = it }
+            if (skipPartiallyExpanded) map[SKIP_PARTIALLY_EXPANDED_KEY] = true
             return map
         }
 
         internal const val BOTTOM_SHEET_KEY = "bottomsheet"
         internal const val CONTAINER_COLOR_KEY = "bottomsheet_container_color"
         internal const val DRAG_HANDLE_KEY = "bottomsheet_drag_handle"
+        internal const val SKIP_PARTIALLY_EXPANDED_KEY = "bottomsheet_skip_partially_expanded"
     }
 }

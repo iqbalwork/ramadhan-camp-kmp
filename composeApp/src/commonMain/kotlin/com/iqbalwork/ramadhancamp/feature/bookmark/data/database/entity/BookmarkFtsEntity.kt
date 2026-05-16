@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.entity
+package com.iqbalwork.ramadhancamp.feature.bookmark.data.database.entity
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
@@ -10,5 +10,7 @@ data class BookmarkFtsEntity(
     @ColumnInfo(name = "ayah_details")
     val ayahDetails: String,
     @ColumnInfo(name = "surah_name")
-    val surahName: String
+    val surahName: String,
+    @ColumnInfo(name = "teks_indonesia")
+    val teksIndonesia: String
 )

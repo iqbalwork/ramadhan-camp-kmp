@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.di
+﻿package com.iqbalwork.ramadhancamp.feature.quran.di
 
 import com.iqbalwork.ramadhancamp.feature.quran.data.datasource.QuranRemoteDatasource
 import com.iqbalwork.ramadhancamp.feature.quran.data.repositories.QuranRepositoryImpl
@@ -49,7 +49,8 @@ val quranModule = module {
             navigationManager = get<NavigationManager> {
                 parametersOf(params.get<BackStackNode>(), params.get<TabState>())
             },
-            shareManager = get()
+            shareManager = get(),
+            bookmarkRepository = get()
         )
     }
 }
