@@ -1,10 +1,11 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
+package com.iqbalwork.ramadhancamp.feature.quran.presentation.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -24,7 +25,8 @@ fun AyatCard(
     ayat: Ayat,
     onOptionsClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isActive: Boolean = false
+    isActive: Boolean = false,
+    isBookmarked: Boolean = false
 ) {
     Column(
         modifier = modifier
@@ -40,8 +42,7 @@ fun AyatCard(
                 .fillMaxWidth()
                 .background(if (isActive) Color.Transparent else RamadhanTheme.colors.bgSecondary)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Box(
                 modifier = Modifier
@@ -54,6 +55,16 @@ fun AyatCard(
                     style = RamadhanTheme.typography.labelSmall,
                     color = RamadhanTheme.colors.textPrimary
                 )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            if (isBookmarked) {
+                Icon(
+                    imageVector = Icons.Default.Bookmark,
+                    contentDescription = "Tersimpan di bookmark",
+                    tint = RamadhanTheme.colors.accentPrimary,
+                    modifier = Modifier.size(18.dp)
+                )
+                Spacer(modifier = Modifier.width(4.dp))
             }
             IconButton(onClick = onOptionsClick) {
                 Icon(

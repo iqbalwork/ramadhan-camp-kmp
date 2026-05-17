@@ -13,6 +13,8 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.ShareManager
+import com.iqbalwork.ramadhancamp.shared.utils.TAG_BOOKMARK_FTS
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
@@ -30,6 +32,8 @@ class QuranSheetViewModel(
 ) {
     private val searchQueryFlow = MutableStateFlow("")
 
+    private val ayatBookmarksMap = mutableMapOf<Long, Long>() // categoryId ? bookmarkId
+
     init {
         combine(
             bookmarkRepository.getAllCategories(),
@@ -39,6 +43,29 @@ class QuranSheetViewModel(
             else allCategories.filter { it.name.contains(query, ignoreCase = true) }
         }.onEach { filtered ->
             updateState { copy(categories = filtered) }
+        }.launchIn(viewModelScope)
+
+        observeAyatBookmarks()
+    }
+
+    private fun observeAyatBookmarks() {
+        combine(
+            bookmarkRepository.getAllBookmarks(),
+            bookmarkRepository.getAllCategories()
+        ) { bookmarks, categories ->
+            val ayatBookmarks = bookmarks.filter {
+                it.surahId == params.surahId && it.ayatNumber == params.ayatNumber
+            }
+            ayatBookmarksMap.clear()
+            ayatBookmarks.forEach { ayatBookmarksMap[it.categoryId] = it.id }
+            val ayatCategoryIds = ayatBookmarks.map { it.categoryId }.toSet()
+            val ayatCategories = categories.filter { it.id in ayatCategoryIds }
+            Pair(ayatBookmarks.isNotEmpty(), ayatCategories)
+        }.onEach { (isBookmarked, bookmarkCategories) ->
+            Napier.d(tag = TAG_BOOKMARK_FTS) {
+                "Ayat ${params.surahId}:${params.ayatNumber} bookmarked=$isBookmarked categories=$bookmarkCategories"
+            }
+            updateState { copy(isBookmarked = isBookmarked, bookmarkCategories = bookmarkCategories) }
         }.launchIn(viewModelScope)
     }
 
@@ -53,7 +80,17 @@ class QuranSheetViewModel(
                 )
             }
             is QuranSheetEvent.Bookmark -> {
-                updateState { copy(step = SheetStep.PlaylistPicker) }
+                if (state.value.isBookmarked) {
+                    val bookmarkCategories = state.value.bookmarkCategories
+                    if (bookmarkCategories.size <= 1) {
+                        val categoryId = bookmarkCategories.firstOrNull()?.id ?: return
+                        handleEvent(QuranSheetEvent.MarkForDeletion(categoryId))
+                    } else {
+                        updateState { copy(step = SheetStep.RemoveFromPlaylist) }
+                    }
+                } else {
+                    updateState { copy(step = SheetStep.PlaylistPicker) }
+                }
             }
             is QuranSheetEvent.Share -> {
                 val shareText = buildString {
@@ -145,7 +182,32 @@ class QuranSheetViewModel(
                     is SheetStep.CreatePlaylist -> {
                         updateState { copy(step = SheetStep.PlaylistPicker) }
                     }
+                    is SheetStep.RemoveFromPlaylist -> {
+                        updateState { copy(step = SheetStep.MainActions) }
+                    }
                 }
+            }
+            is QuranSheetEvent.MarkForDeletion -> {
+                val bookmarkId = ayatBookmarksMap[event.categoryId]
+                if (bookmarkId != null) {
+                    Napier.d(tag = TAG_BOOKMARK_FTS) { "Marking bookmark $bookmarkId for deletion" }
+                    updateState { copy(showDeleteConfirmDialog = true, bookmarkToDelete = bookmarkId) }
+                }
+            }
+            is QuranSheetEvent.ConfirmDelete -> {
+                val bookmarkId = state.value.bookmarkToDelete ?: return
+                viewModelScope.launch {
+                    Napier.d(tag = TAG_BOOKMARK_FTS) { "Deleting bookmark $bookmarkId" }
+                    bookmarkRepository.deleteBookmark(bookmarkId)
+                    updateState { copy(showDeleteConfirmDialog = false, bookmarkToDelete = null) }
+                    sendEffect(QuranSheetEffect.DismissSheet)
+                }
+            }
+            is QuranSheetEvent.CancelDelete -> {
+                updateState { copy(showDeleteConfirmDialog = false, bookmarkToDelete = null) }
+            }
+            is QuranSheetEvent.OpenDeletePlaylist -> {
+                updateState { copy(step = SheetStep.RemoveFromPlaylist) }
             }
         }
     }

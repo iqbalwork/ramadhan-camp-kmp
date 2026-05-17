@@ -1,13 +1,13 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
+package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
+import com.iqbalwork.ramadhancamp.feature.bookmark.domain.repository.BookmarkRepository
 import com.iqbalwork.ramadhancamp.feature.home.domain.model.LastSurahRead
 import com.iqbalwork.ramadhancamp.feature.home.domain.usecase.UpdateLastSurahRead
 import com.iqbalwork.ramadhancamp.feature.quran.domain.repository.QuranRepository
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranDetailEffect
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranDetailEvent
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranDetailState
-import com.iqbalwork.ramadhancamp.feature.quran.presentation.QuranSheetScreenParameters
 import com.iqbalwork.ramadhancamp.shared.common.audio.AudioController
 import com.iqbalwork.ramadhancamp.shared.common.navigation.AyatNumberResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.DialogDestination
@@ -20,8 +20,11 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.SnackBarD
 import com.iqbalwork.ramadhancamp.shared.common.ui.utils.TextResource
 import com.iqbalwork.ramadhancamp.shared.common.utils.AppError
 import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
+import com.iqbalwork.ramadhancamp.shared.utils.TAG_BOOKMARK_FTS
+import io.github.aakira.napier.Napier
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import ramadhancamp.composeapp.generated.resources.Res
@@ -34,6 +37,7 @@ class QuranDetailViewModel(
     private val shareManager: ShareManager,
     private val updateLastSurahRead: UpdateLastSurahRead,
     private val audioController: AudioController,
+    private val bookmarkRepository: BookmarkRepository,
 ) : BaseViewModel<QuranDetailScreenParameters, QuranDetailState, QuranDetailEvent, QuranDetailEffect>(
     params, QuranDetailState(), navigationManager,
     resultKeys = arrayOf("quran_sheet_play")
@@ -47,6 +51,18 @@ class QuranDetailViewModel(
     init {
         observeAudioState()
         loadSurahDetail()
+        observeBookmarkStatus()
+    }
+
+    private fun observeBookmarkStatus() {
+        bookmarkRepository.getAllBookmarks()
+            .map { bookmarks -> bookmarks.filter { it.surahId == params.surahId } }
+            .onEach { bookmarks ->
+                val ayatNumbers = bookmarks.map { it.ayatNumber }.toSet()
+                Napier.d(tag = TAG_BOOKMARK_FTS) { "Bookmarked ayat numbers for surah ${params.surahId}: $ayatNumbers" }
+                updateState { copy(bookmarkedAyatNumbers = ayatNumbers) }
+            }
+            .launchIn(viewModelScope)
     }
 
     private fun observeAudioState() {
@@ -282,5 +298,3 @@ class QuranDetailViewModel(
         }
     }
 }
-
-

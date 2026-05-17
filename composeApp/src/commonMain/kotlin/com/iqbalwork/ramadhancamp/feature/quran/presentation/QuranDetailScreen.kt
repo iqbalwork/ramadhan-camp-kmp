@@ -169,7 +169,8 @@ fun QuranDetailContent(state: QuranDetailState, action: (QuranDetailEvent) -> Un
                             AyatCard(
                                 ayat = ayat,
                                 onOptionsClick = { action(QuranDetailEvent.OpenAyatSheet(ayat)) },
-                                isActive = (ayat == state.playingAyat)
+                                isActive = (ayat == state.playingAyat),
+                                isBookmarked = ayat.nomorAyat in state.bookmarkedAyatNumbers
                             )
                         }
                     }

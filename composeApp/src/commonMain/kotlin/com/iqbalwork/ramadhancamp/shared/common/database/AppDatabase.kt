@@ -13,7 +13,7 @@ import com.iqbalwork.ramadhancamp.feature.bookmark.data.database.dao.BookmarkDao
         BookmarkFtsEntity::class,
         CategoryEntity::class
     ],
-    version = 2
+    version = 3
 )
 abstract class AppDatabase : RoomDatabase() {
     abstract fun bookmarkDao(): BookmarkDao
