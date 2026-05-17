@@ -16,7 +16,10 @@ import androidx.room.PrimaryKey
             onDelete = ForeignKey.CASCADE
         )
     ],
-    indices = [Index(value = ["category_id"])]
+    indices = [
+        Index(value = ["category_id"]),
+        Index(value = ["surah_id", "ayat_number", "category_id"], unique = true)
+    ]
 )
 data class BookmarkEntity(
     @PrimaryKey(autoGenerate = true)

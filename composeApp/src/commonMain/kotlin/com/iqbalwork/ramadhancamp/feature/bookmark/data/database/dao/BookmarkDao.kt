@@ -31,6 +31,12 @@ interface BookmarkDao {
     @Query("SELECT b.* FROM bookmark b WHERE b.id IN (SELECT rowid FROM bookmark_fts WHERE bookmark_fts MATCH :query) AND b.category_id = :categoryId")
     fun searchBookmarksByCategory(query: String, categoryId: Long): Flow<List<BookmarkEntity>>
 
+    @Query("SELECT * FROM bookmark WHERE surah_id = :surahId AND ayat_number = :ayatNumber")
+    fun getBookmarksBySurahAndAyat(surahId: Int, ayatNumber: Int): Flow<List<BookmarkEntity>>
+
+    @Query("SELECT EXISTS(SELECT 1 FROM bookmark WHERE surah_id = :surahId AND ayat_number = :ayatNumber)")
+    fun isAyatBookmarked(surahId: Int, ayatNumber: Int): Flow<Boolean>
+
     @Query("DELETE FROM bookmark WHERE id = :id")
     suspend fun deleteBookmark(id: Long)
 

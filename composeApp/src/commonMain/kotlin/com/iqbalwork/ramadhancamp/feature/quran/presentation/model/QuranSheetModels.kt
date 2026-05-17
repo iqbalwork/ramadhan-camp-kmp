@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
+package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
 
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Category
 import com.iqbalwork.ramadhancamp.shared.common.ui.UiEffect
@@ -8,6 +8,7 @@ sealed interface SheetStep {
     data object MainActions : SheetStep
     data object PlaylistPicker : SheetStep
     data object CreatePlaylist : SheetStep
+    data object RemoveFromPlaylist : SheetStep
 }
 
 data class QuranSheetState(
@@ -16,7 +17,11 @@ data class QuranSheetState(
     val categories: List<Category> = emptyList(),
     val newCategoryName: String = "",
     val isSaving: Boolean = false,
-    val bookmarkMessage: String? = null
+    val bookmarkMessage: String? = null,
+    val bookmarkCategories: List<Category> = emptyList(),
+    val isBookmarked: Boolean = false,
+    val showDeleteConfirmDialog: Boolean = false,
+    val bookmarkToDelete: Long? = null
 )
 
 sealed interface QuranSheetEvent : UiEvent {
@@ -32,6 +37,10 @@ sealed interface QuranSheetEvent : UiEvent {
     data class SelectCategory(val categoryId: Long) : QuranSheetEvent
     data class CreateNewPlaylist(val name: String) : QuranSheetEvent
     data object BackFromStep : QuranSheetEvent
+    data class MarkForDeletion(val categoryId: Long) : QuranSheetEvent
+    data object ConfirmDelete : QuranSheetEvent
+    data object CancelDelete : QuranSheetEvent
+    data object OpenDeletePlaylist : QuranSheetEvent
 }
 
 sealed interface QuranSheetEffect : UiEffect {

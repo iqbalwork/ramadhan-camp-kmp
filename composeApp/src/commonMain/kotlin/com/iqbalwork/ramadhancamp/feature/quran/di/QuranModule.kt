@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.quran.di
+package com.iqbalwork.ramadhancamp.feature.quran.di
 
 import com.iqbalwork.ramadhancamp.feature.quran.data.datasource.QuranRemoteDatasource
 import com.iqbalwork.ramadhancamp.feature.quran.data.repositories.QuranRepositoryImpl
@@ -39,7 +39,8 @@ val quranModule = module {
             quranRepository = get(),
             shareManager = get(),
             updateLastSurahRead = get(),
-            audioController = get()
+            audioController = get(),
+            bookmarkRepository = get()
         )
     }
 

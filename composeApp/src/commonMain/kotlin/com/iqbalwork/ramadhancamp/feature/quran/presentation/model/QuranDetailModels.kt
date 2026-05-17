@@ -17,7 +17,8 @@ data class QuranDetailState(
     val totalTimeMs: Long = 0L,
     val currentTimeMs: Long = 0L,
     val autoScrolledToPlayingAyat: Boolean = false,
-    val hasScrolledToInitialAyah: Boolean = false
+    val hasScrolledToInitialAyah: Boolean = false,
+    val bookmarkedAyatNumbers: Set<Int> = emptySet()
 )
 
 sealed interface QuranDetailEvent : UiEvent {
