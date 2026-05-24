@@ -143,7 +143,8 @@ class QuranDetailViewModel(
                         nextAyatAudioUrl = nextUrl,
                         isPlaying = true,
                         isBuffering = true,
-                        autoScrolledToPlayingAyat = false
+                        autoScrolledToPlayingAyat = false,
+                        currentTimeMs = 0L,
                     ) 
                 }
 
