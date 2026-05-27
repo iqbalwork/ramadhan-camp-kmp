@@ -26,6 +26,7 @@ import androidx.compose.material.icons.outlined.Add
 import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.dialog.RamadhanAlertDialog
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -79,46 +80,21 @@ fun QuranSheetScreen(params: QuranSheetScreenParameters) {
 
     // Delete confirmation dialog
     if (state.showDeleteConfirmDialog) {
-        AlertDialog(
-            onDismissRequest = { action(QuranSheetEvent.CancelDelete) },
-            title = {
-                Text(
-                    "Hapus Bookmark?",
-                    style = RamadhanTheme.typography.headlineSmall,
-                    color = RamadhanTheme.colors.textPrimary
-                )
-            },
-            text = {
-                val categoryName = if (state.bookmarkCategories.size == 1) {
-                    state.bookmarkCategories.first().name
-                } else {
-                    "playlist terpilih"
-                }
-                Text(
-                    text = "Bookmark ayat ini akan dihapus dari playlist \"$categoryName\".",
-                    style = RamadhanTheme.typography.bodyLarge,
-                    color = RamadhanTheme.colors.textSecondary
-                )
-            },
-            confirmButton = {
-                RamadhanButton(
-                    onClick = { action(QuranSheetEvent.ConfirmDelete) },
-                    variant = RamadhanButtonProps.Variant.Primary,
-                    text = "Hapus",
-                    size = RamadhanButtonProps.Size.Middle
-                )
-            },
-            dismissButton = {
-                RamadhanButton(
-                    onClick = { action(QuranSheetEvent.CancelDelete) },
-                    variant = RamadhanButtonProps.Variant.Ghost,
-                    text = "Batal",
-                    size = RamadhanButtonProps.Size.Middle
-                )
-            },
-            containerColor = RamadhanTheme.colors.bgSecondary,
-            titleContentColor = RamadhanTheme.colors.textPrimary,
-            textContentColor = RamadhanTheme.colors.textSecondary
+        val categoryName = if (state.bookmarkCategories.size == 1) {
+            state.bookmarkCategories.first().name
+        } else {
+            "playlist terpilih"
+        }
+
+        RamadhanAlertDialog(
+            onDismiss = { action(QuranSheetEvent.CancelDelete) },
+            onConfirm = { action(QuranSheetEvent.ConfirmDelete) },
+            title = "Hapus Bookmark?",
+            text = "Bookmark ayat ini akan dihapus dari playlist \"$categoryName\".",
+            confirmButtonText = "Hapus",
+            confirmButtonVariant = RamadhanButtonProps.Variant.Primary,
+            dismissButtonText = "Batal",
+            dismissButtonVariant = RamadhanButtonProps.Variant.Ghost
         )
     }
 
