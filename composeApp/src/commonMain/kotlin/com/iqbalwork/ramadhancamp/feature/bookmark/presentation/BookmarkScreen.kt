@@ -56,6 +56,8 @@ import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.components.Categ
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.model.BookmarkEvent
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.model.BookmarkState
 import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButton
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButtonProps
 import com.iqbalwork.ramadhancamp.shared.common.ui.rememberDispatch
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 
@@ -110,20 +112,20 @@ fun BookmarkContent(
                 )
             },
             confirmButton = {
-                Button(
+                RamadhanButton(
                     onClick = { action(BookmarkEvent.ConfirmDeleteCategory) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.accentEmerald,
-                        contentColor = colors.textOnLight
-                    )
-                ) {
-                    Text("Delete", style = typography.labelLarge)
-                }
+                    variant = RamadhanButtonProps.Variant.Danger,
+                    text = "Delete",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             },
             dismissButton = {
-                TextButton(onClick = { action(BookmarkEvent.DismissDeleteCategory) }) {
-                    Text("Cancel", color = colors.textMuted, style = typography.labelLarge)
-                }
+                RamadhanButton(
+                    onClick = { action(BookmarkEvent.DismissDeleteCategory) },
+                    variant = RamadhanButtonProps.Variant.Ghost,
+                    text = "Cancel",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             }
         )
     }
@@ -147,21 +149,20 @@ fun BookmarkContent(
                 )
             },
             confirmButton = {
-                Button(
+                RamadhanButton(
                     onClick = { action(BookmarkEvent.ConfirmDeleteBookmark) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = colors.accentPrimary
-                    )
-                ) {
-                    Text("Hapus", color = colors.textOnLight)
-                }
+                    variant = RamadhanButtonProps.Variant.Danger,
+                    text = "Hapus",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             },
             dismissButton = {
-                TextButton(
-                    onClick = { action(BookmarkEvent.DismissDeleteBookmark) }
-                ) {
-                    Text("Batal", color = colors.textMuted)
-                }
+                RamadhanButton(
+                    onClick = { action(BookmarkEvent.DismissDeleteBookmark) },
+                    variant = RamadhanButtonProps.Variant.Ghost,
+                    text = "Batal",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             },
             containerColor = colors.bgSecondary,
             titleContentColor = colors.textPrimary,

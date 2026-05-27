@@ -42,6 +42,8 @@ import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranSheetEve
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.QuranSheetState
 import com.iqbalwork.ramadhancamp.feature.quran.presentation.model.SheetStep
 import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButton
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButtonProps
 import com.iqbalwork.ramadhancamp.shared.common.ui.rememberDispatch
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import org.koin.core.parameter.parametersOf
@@ -99,21 +101,20 @@ fun QuranSheetScreen(params: QuranSheetScreenParameters) {
                 )
             },
             confirmButton = {
-                Button(
+                RamadhanButton(
                     onClick = { action(QuranSheetEvent.ConfirmDelete) },
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = RamadhanTheme.colors.accentPrimary
-                    )
-                ) {
-                    Text("Hapus", color = RamadhanTheme.colors.textOnLight)
-                }
+                    variant = RamadhanButtonProps.Variant.Primary,
+                    text = "Hapus",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             },
             dismissButton = {
-                TextButton(
-                    onClick = { action(QuranSheetEvent.CancelDelete) }
-                ) {
-                    Text("Batal", color = RamadhanTheme.colors.textMuted)
-                }
+                RamadhanButton(
+                    onClick = { action(QuranSheetEvent.CancelDelete) },
+                    variant = RamadhanButtonProps.Variant.Ghost,
+                    text = "Batal",
+                    size = RamadhanButtonProps.Size.Middle
+                )
             },
             containerColor = RamadhanTheme.colors.bgSecondary,
             titleContentColor = RamadhanTheme.colors.textPrimary,
@@ -130,7 +131,7 @@ fun QuranSheetScreen(params: QuranSheetScreenParameters) {
             targetState = state.step,
             transitionSpec = {
                 (slideInHorizontally { it / 4 } + fadeIn()) togetherWith
-                    (slideOutHorizontally { -it / 4 } + fadeOut())
+                        (slideOutHorizontally { -it / 4 } + fadeOut())
             },
             label = "step_transition"
         ) { currentStep ->
@@ -262,23 +263,13 @@ private fun MainActionsContent(
         Spacer(modifier = Modifier.height(32.dp))
 
         // Cancel button
-        OutlinedButton(
+        RamadhanButton(
             onClick = { action(QuranSheetEvent.Dismiss) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = colors.textPrimary
-            ),
-            border = BorderStroke(1.dp, colors.divider)
-        ) {
-            Text(
-                text = "Batal",
-                style = typography.labelLarge,
-                color = colors.textPrimary
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+            variant = RamadhanButtonProps.Variant.Outline,
+            text = "Batal",
+            size = RamadhanButtonProps.Size.Middle
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
     }
@@ -578,7 +569,7 @@ private fun PlaylistPickerContent(
 
             Spacer(modifier = Modifier.height(8.dp))
 
-            // "Buat playlist baru" row — always visible at bottom
+            // "Buat playlist baru" row ï¿½ always visible at bottom
             PlaylistCreateRow(
                 onClick = { action(QuranSheetEvent.OpenCreatePlaylist) }
             )
@@ -767,54 +758,25 @@ private fun CreatePlaylistContent(
         Spacer(modifier = Modifier.height(24.dp))
 
         // Simpan button
-        Button(
+        RamadhanButton(
             onClick = { action(QuranSheetEvent.CreateNewPlaylist(playlistName)) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = colors.accentPrimary,
-                contentColor = colors.textOnLight,
-                disabledContainerColor = colors.accentPrimary.copy(alpha = 0.4f),
-                disabledContentColor = colors.textOnLight.copy(alpha = 0.6f)
-            ),
-            enabled = playlistName.isNotBlank() && !state.isSaving
-        ) {
-            if (state.isSaving) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(20.dp),
-                    color = colors.textOnLight,
-                    strokeWidth = 2.dp
-                )
-            } else {
-                Text(
-                    text = "Simpan",
-                    style = typography.labelLarge
-                )
-            }
-        }
+            modifier = Modifier.fillMaxWidth(),
+            variant = RamadhanButtonProps.Variant.Primary,
+            text = "Simpan",
+            enabled = playlistName.isNotBlank() && !state.isSaving,
+            isProgress = state.isSaving
+        )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         // Batal button
-        OutlinedButton(
+        RamadhanButton(
             onClick = { action(QuranSheetEvent.BackFromStep) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp),
-            shape = RoundedCornerShape(12.dp),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = colors.textPrimary
-            ),
-            border = BorderStroke(1.dp, colors.divider)
-        ) {
-            Text(
-                text = "Batal",
-                style = typography.labelLarge,
-                color = colors.textPrimary
-            )
-        }
+            modifier = Modifier.fillMaxWidth(),
+            variant = RamadhanButtonProps.Variant.Outline,
+            text = "Batal",
+            size = RamadhanButtonProps.Size.Middle
+        )
 
         Spacer(modifier = Modifier.height(24.dp))
     }
