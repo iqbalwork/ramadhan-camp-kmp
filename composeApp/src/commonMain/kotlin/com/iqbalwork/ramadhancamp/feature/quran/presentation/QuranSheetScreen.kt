@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -150,44 +151,55 @@ private fun MainActionsContent(
             modifier = Modifier.padding(bottom = 32.dp)
         )
 
-        // Bookmark categories info
+        // Bookmark info — single playlist indicator
         if (state.isBookmarked && state.bookmarkCategories.isNotEmpty()) {
+            val category = state.bookmarkCategories.first()
+            val categoryColor = Color(category.color)
+
             Spacer(modifier = Modifier.height(12.dp))
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .background(colors.bgSurface.copy(alpha = 0.3f), RoundedCornerShape(8.dp))
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                    .background(colors.bgSecondary, RoundedCornerShape(12.dp))
+                    .padding(horizontal = 12.dp, vertical = 10.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
+                // Vertical accent strip — expresses the playlist color as a left indicator
+                Box(
+                    modifier = Modifier
+                        .width(3.dp)
+                        .height(20.dp)
+                        .background(categoryColor, RoundedCornerShape(1.5.dp))
+                )
+
+                Spacer(modifier = Modifier.width(10.dp))
+
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = null,
-                    tint = colors.accentPrimary,
-                    modifier = Modifier.size(16.dp)
+                    tint = colors.accentGold,
+                    modifier = Modifier.size(14.dp)
                 )
-                Spacer(modifier = Modifier.width(8.dp))
+
+                Spacer(modifier = Modifier.width(6.dp))
+
                 Text(
-                    text = "Disimpan di: ",
+                    text = "Disimpan di",
                     style = typography.labelSmall,
                     color = colors.textSecondary
                 )
-                state.bookmarkCategories.forEachIndexed { index, category ->
-                    val categoryColor = Color(category.color)
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Box(
-                        modifier = Modifier
-                            .size(6.dp)
-                            .clip(CircleShape)
-                            .background(categoryColor)
-                    )
-                    Spacer(modifier = Modifier.width(2.dp))
-                    Text(
-                        text = if (index < state.bookmarkCategories.size - 1) "${category.name}," else category.name,
-                        style = typography.labelSmall,
-                        color = categoryColor
-                    )
-                }
+
+                Spacer(modifier = Modifier.width(6.dp))
+
+                Text(
+                    text = category.name,
+                    style = typography.labelLarge,
+                    color = categoryColor,
+                    maxLines = 1,
+                    modifier = Modifier
+                        .weight(1f)
+                        .basicMarquee()
+                )
             }
             Spacer(modifier = Modifier.height(16.dp))
         }
@@ -798,3 +810,4 @@ private fun ActionItem(
         )
     }
 }
+
