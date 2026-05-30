@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.home.presentation
+package com.iqbalwork.ramadhancamp.feature.home.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.home.domain.repository.HomeRepository
@@ -65,7 +65,7 @@ class HomeViewModel(
     }
 
     private suspend fun initData() {
-        updateState { copy(isLoading = true, appError = null, emptyErrorState = null) }
+        updateState { copy(isLoading = true, appError = null, emptyErrorState = null, isPermissionDenied = false) }
 
         params.locationData?.let {
             homeRepository.saveManualLocation(it.province, it.city)
@@ -172,7 +172,17 @@ class HomeViewModel(
 
     override fun handleEvent(event: HomeEvent) {
         when (event) {
-            HomeEvent.LoadInitialData -> viewModelScope.launch { initData() }
+            HomeEvent.LoadInitialData -> viewModelScope.launch {
+                if (state.value.isPermissionDenied) {
+                    updateState { copy(isLoading = true) }
+                    val result = homeRepository.getCurrentCoordinate().getOrNull()
+                    updateState { copy(isLoading = false) }
+                    if (result is GeolocatorResult.PermissionDenied) {
+                        return@launch
+                    }
+                }
+                initData()
+            }
             HomeEvent.GoToSetting -> goToDeviceSettings()
             HomeEvent.NavigateToLocationPicker -> navigationManager.navigateTo(TabDestination.HomeLocationPicker)
             HomeEvent.OnSearchBoxClicked -> {

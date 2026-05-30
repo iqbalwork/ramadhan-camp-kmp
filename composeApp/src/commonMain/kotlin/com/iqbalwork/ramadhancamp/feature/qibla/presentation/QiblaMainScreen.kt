@@ -1,4 +1,4 @@
-﻿package com.iqbalwork.ramadhancamp.feature.qibla.presentation
+package com.iqbalwork.ramadhancamp.feature.qibla.presentation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -14,6 +14,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iqbalwork.ramadhancamp.feature.qibla.presentation.components.CompassDial
 import com.iqbalwork.ramadhancamp.feature.qibla.presentation.components.QiblaNoLocationPlaceholder
@@ -31,6 +34,15 @@ fun QiblaMainScreen() {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val dispatch = viewModel.rememberDispatch()
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LifecycleEventEffect(
+        Lifecycle.Event.ON_RESUME,
+        lifecycleOwner
+    ) {
+        if (state.hasLocationPermission) return@LifecycleEventEffect
+        dispatch(QiblaEvent.RequestLocation)
+    }
+
     QiblaContent(state = state, action = dispatch)
 }
 
@@ -45,6 +57,7 @@ fun QiblaContent(
     if (!state.hasLocationPermission) {
         QiblaNoLocationPlaceholder(
             onRequestPermission = { action(QiblaEvent.RequestLocation) },
+            onGoToSettings = { action(QiblaEvent.GoToSettings) },
             modifier = Modifier
                 .fillMaxSize()
                 .background(colors.bgPrimary)

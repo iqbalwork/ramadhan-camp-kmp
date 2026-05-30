@@ -10,14 +10,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButton
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.button.RamadhanButtonProps
 import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 import org.jetbrains.compose.resources.stringResource
 import ramadhancamp.composeapp.generated.resources.Res
+import ramadhancamp.composeapp.generated.resources.open_app_settings
 import ramadhancamp.composeapp.generated.resources.set_location_in_home_tab
 import ramadhancamp.composeapp.generated.resources.shalat_schedule_not_avail
 
 @Composable
-fun NoLocationPlaceholder(modifier: Modifier = Modifier) {
+fun NoLocationPlaceholder(
+    onSettingsClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     val colors = RamadhanTheme.colors
     val typography = RamadhanTheme.typography
 
@@ -47,6 +53,13 @@ fun NoLocationPlaceholder(modifier: Modifier = Modifier) {
             style = typography.bodyLarge,
             color = colors.textMuted,
             textAlign = TextAlign.Center
+        )
+        Spacer(Modifier.height(24.dp))
+        RamadhanButton(
+            onClick = onSettingsClick,
+            variant = RamadhanButtonProps.Variant.Primary,
+            text = stringResource(Res.string.open_app_settings),
+            size = RamadhanButtonProps.Size.Middle
         )
     }
 }

@@ -11,6 +11,7 @@ import ramadhancamp.composeapp.generated.resources.error_location_permission_den
 import ramadhancamp.composeapp.generated.resources.error_location_permission_denied_title
 import ramadhancamp.composeapp.generated.resources.error_location_title
 import ramadhancamp.composeapp.generated.resources.image_danger_error
+import ramadhancamp.composeapp.generated.resources.open_app_settings
 import ramadhancamp.composeapp.generated.resources.retry
 
 fun GeolocatorResult.toErrorEmptyState(): ErrorEmptyState {
@@ -38,7 +39,7 @@ fun GeolocatorResult.toErrorEmptyState(): ErrorEmptyState {
                 icon = Res.drawable.image_danger_error,
                 title = TextResource.StringResource(Res.string.error_location_permission_denied_title),
                 message = TextResource.StringResource(Res.string.error_location_permission_denied_message),
-                buttonText = TextResource.StringResource(Res.string.retry)
+                buttonText = TextResource.StringResource(Res.string.open_app_settings)
             )
             is GeolocatorResult.GeolocationFailed -> ErrorEmptyState(
                 icon = Res.drawable.image_danger_error,

@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.qibla.presentation.model
+﻿package com.iqbalwork.ramadhancamp.feature.qibla.presentation.model
 
 import com.iqbalwork.ramadhancamp.shared.common.ui.UiEffect
 import com.iqbalwork.ramadhancamp.shared.common.ui.UiEvent
@@ -15,6 +15,7 @@ data class QiblaState(
 
 sealed interface QiblaEvent : UiEvent {
     data object RequestLocation : QiblaEvent
+    data object GoToSettings : QiblaEvent
 }
 
 sealed interface QiblaEffect : UiEffect

@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.qibla.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.qibla.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.qibla.domain.repository.QiblaRepository
@@ -7,6 +7,8 @@ import com.iqbalwork.ramadhancamp.feature.qibla.presentation.model.QiblaEvent
 import com.iqbalwork.ramadhancamp.feature.qibla.presentation.model.QiblaState
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
+import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
+import dev.jordond.compass.geolocation.GeolocatorResult
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -63,7 +65,22 @@ class QiblaViewModel(
     override fun handleEvent(event: QiblaEvent) {
         when (event) {
             is QiblaEvent.RequestLocation -> {
-                fetchQiblaLocation()
+                if (!state.value.hasLocationPermission) {
+                    viewModelScope.launch {
+                        updateState { copy(isLoading = true) }
+                        val result = qiblaRepository.checkLocationPermission().getOrNull()
+                        updateState { copy(isLoading = false) }
+                        if (result is GeolocatorResult.PermissionDenied) {
+                            return@launch
+                        }
+                        fetchQiblaLocation()
+                    }
+                } else {
+                    fetchQiblaLocation()
+                }
+            }
+            is QiblaEvent.GoToSettings -> {
+                goToDeviceSettings()
             }
         }
     }

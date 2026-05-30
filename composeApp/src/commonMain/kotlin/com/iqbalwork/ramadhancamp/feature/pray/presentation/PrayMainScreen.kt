@@ -119,7 +119,9 @@ fun PrayContent(
             }
         ) { targetState ->
             when(targetState) {
-                is AnimateContentState.NoLocation -> NoLocationPlaceholder()
+                is AnimateContentState.NoLocation -> NoLocationPlaceholder(
+                    onSettingsClick = { action(PrayEvent.GoToSetting) }
+                )
 
                 is AnimateContentState.Loading -> Loader(modifier = Modifier.fillMaxSize())
 

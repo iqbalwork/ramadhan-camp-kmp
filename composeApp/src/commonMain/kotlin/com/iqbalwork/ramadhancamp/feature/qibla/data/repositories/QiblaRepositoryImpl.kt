@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.qibla.data.repositories
+﻿package com.iqbalwork.ramadhancamp.feature.qibla.data.repositories
 
 import com.iqbalwork.ramadhancamp.feature.qibla.data.datasource.QiblaPreferences
 import com.iqbalwork.ramadhancamp.feature.qibla.domain.model.QiblaLocation
@@ -87,6 +87,10 @@ class QiblaRepositoryImpl(
             bearingToKaaba = bearing,
             distanceToKaabaKm = distanceKm
         )
+    }
+
+    override suspend fun checkLocationPermission(): Result<GeolocatorResult> = runCatching {
+        geolocator.current(Priority.HighAccuracy)
     }
 
     override fun startCompass() = compassSensor.start()
