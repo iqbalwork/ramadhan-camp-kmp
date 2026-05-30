@@ -19,6 +19,7 @@ import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
 import com.iqbalwork.ramadhancamp.shared.common.utils.date.getCurrentDateLocalized
 import com.iqbalwork.ramadhancamp.shared.common.utils.goToDeviceSettings
 import com.iqbalwork.ramadhancamp.shared.common.utils.toAppError
+import com.iqbalwork.ramadhancamp.shared.common.utils.isLocationPermissionGranted
 import dev.jordond.compass.geolocation.GeolocatorResult
 import io.github.aakira.napier.log
 import kotlinx.coroutines.delay
@@ -170,16 +171,19 @@ class HomeViewModel(
             }
     }
 
+    private fun checkLocationPermission(): Boolean {
+        return isLocationPermissionGranted()
+    }
+
     override fun handleEvent(event: HomeEvent) {
         when (event) {
             HomeEvent.LoadInitialData -> viewModelScope.launch {
                 if (state.value.isPermissionDenied) {
                     updateState { copy(isLoading = true) }
-                    val result = homeRepository.getCurrentCoordinate().getOrNull()
+                    val isGranted = checkLocationPermission()
                     updateState { copy(isLoading = false) }
-                    if (result is GeolocatorResult.PermissionDenied) {
-                        return@launch
-                    }
+                    if (!isGranted) return@launch
+                    updateState { copy(isPermissionDenied = false) }
                 }
                 initData()
             }

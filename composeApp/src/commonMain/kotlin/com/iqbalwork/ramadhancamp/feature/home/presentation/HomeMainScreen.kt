@@ -16,6 +16,7 @@ import com.iqbalwork.ramadhancamp.shared.common.extension.rememberViewModel
 import com.iqbalwork.ramadhancamp.shared.common.ui.ScreenUiParams
 import com.iqbalwork.ramadhancamp.shared.common.ui.rememberDispatch
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import org.koin.core.parameter.parametersOf
 
 @Serializable
@@ -41,11 +42,9 @@ fun HomeMainScreen(
         dispatch(HomeEvent.LoadInitialData)
     }
 
-
     HomeMainScreenContent(
         modifier = Modifier.fillMaxSize(),
         state = state,
         action = dispatch
     )
-
 }

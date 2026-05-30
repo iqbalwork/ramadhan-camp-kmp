@@ -6,3 +6,7 @@ import dev.jordond.compass.permissions.mobile.openSettings
 actual fun goToDeviceSettings() {
     LocationPermissionController.openSettings()
 }
+
+actual fun isLocationPermissionGranted(): Boolean {
+    return LocationPermissionController().hasPermission()
+}
