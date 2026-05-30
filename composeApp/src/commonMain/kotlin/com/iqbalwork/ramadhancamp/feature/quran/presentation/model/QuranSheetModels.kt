@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation.model
 
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Category
 import com.iqbalwork.ramadhancamp.shared.common.ui.UiEffect
@@ -17,7 +17,6 @@ data class QuranSheetState(
     val categories: List<Category> = emptyList(),
     val newCategoryName: String = "",
     val isSaving: Boolean = false,
-    val bookmarkMessage: String? = null,
     val bookmarkCategories: List<Category> = emptyList(),
     val isBookmarked: Boolean = false,
     val showDeleteConfirmDialog: Boolean = false,
@@ -30,7 +29,6 @@ sealed interface QuranSheetEvent : UiEvent {
     data object Share : QuranSheetEvent
     data object Copy : QuranSheetEvent
     data object Dismiss : QuranSheetEvent
-    data object BookmarkSuccessHandled : QuranSheetEvent
     data object OpenPlaylistPicker : QuranSheetEvent
     data object OpenCreatePlaylist : QuranSheetEvent
     data class OnSearchQueryChanged(val query: String) : QuranSheetEvent

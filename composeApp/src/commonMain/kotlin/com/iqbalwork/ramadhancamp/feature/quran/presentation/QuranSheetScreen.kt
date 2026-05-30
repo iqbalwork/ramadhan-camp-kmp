@@ -28,12 +28,16 @@ import androidx.compose.material.icons.outlined.Folder
 import androidx.compose.material.icons.outlined.Search
 import androidx.compose.material3.*
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.dialog.RamadhanAlertDialog
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.RamadhanSnackBarHost
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalClipboardManager
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -56,26 +60,19 @@ fun QuranSheetScreen(params: QuranSheetScreenParameters) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val action = viewModel.rememberDispatch()
 
+    val clipboard = LocalClipboardManager.current
+
     // Handle effects
     LaunchedEffect(Unit) {
         viewModel.effects.collect { effect ->
             when (effect) {
                 is QuranSheetEffect.CopyToClipboard -> {
-                    // Clipboard handling will be implemented in a follow-up
+                    clipboard.setText(AnnotatedString(effect.text))
                 }
                 is QuranSheetEffect.DismissSheet -> {
                     action(QuranSheetEvent.Dismiss)
                 }
             }
-        }
-    }
-
-    // Snackbar for bookmark success
-    val snackbarHostState = remember { SnackbarHostState() }
-    LaunchedEffect(state.bookmarkMessage) {
-        state.bookmarkMessage?.let {
-            snackbarHostState.showSnackbar(it)
-            action(QuranSheetEvent.BookmarkSuccessHandled)
         }
     }
 
@@ -99,24 +96,29 @@ fun QuranSheetScreen(params: QuranSheetScreenParameters) {
         )
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 16.dp)
+    RamadhanSnackBarHost(
+        modifier = Modifier.fillMaxWidth(),
+        snackbarFlow = viewModel.snackBarEvents
     ) {
-        AnimatedContent(
-            targetState = state.step,
-            transitionSpec = {
-                (slideInHorizontally { it / 4 } + fadeIn()) togetherWith
-                        (slideOutHorizontally { -it / 4 } + fadeOut())
-            },
-            label = "step_transition"
-        ) { currentStep ->
-            when (currentStep) {
-                SheetStep.MainActions -> MainActionsContent(state, action, params)
-                SheetStep.PlaylistPicker -> PlaylistPickerContent(state, action)
-                SheetStep.CreatePlaylist -> CreatePlaylistContent(state, action)
-                SheetStep.RemoveFromPlaylist -> RemoveFromPlaylistContent(state, action)
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 24.dp, vertical = 16.dp)
+        ) {
+            AnimatedContent(
+                targetState = state.step,
+                transitionSpec = {
+                    (slideInHorizontally { it / 4 } + fadeIn()) togetherWith
+                            (slideOutHorizontally { -it / 4 } + fadeOut())
+                },
+                label = "step_transition"
+            ) { currentStep ->
+                when (currentStep) {
+                    SheetStep.MainActions -> MainActionsContent(state, action, params)
+                    SheetStep.PlaylistPicker -> PlaylistPickerContent(state, action)
+                    SheetStep.CreatePlaylist -> CreatePlaylistContent(state, action)
+                    SheetStep.RemoveFromPlaylist -> RemoveFromPlaylistContent(state, action)
+                }
             }
         }
     }

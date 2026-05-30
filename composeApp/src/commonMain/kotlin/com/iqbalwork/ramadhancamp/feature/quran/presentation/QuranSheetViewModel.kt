@@ -1,4 +1,4 @@
-package com.iqbalwork.ramadhancamp.feature.quran.presentation
+﻿package com.iqbalwork.ramadhancamp.feature.quran.presentation
 
 import androidx.lifecycle.viewModelScope
 import com.iqbalwork.ramadhancamp.feature.bookmark.domain.model.Bookmark
@@ -12,6 +12,9 @@ import com.iqbalwork.ramadhancamp.shared.common.navigation.AyatNumberResult
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationManager
 import com.iqbalwork.ramadhancamp.shared.common.navigation.NavigationResult
 import com.iqbalwork.ramadhancamp.shared.common.ui.BaseViewModel
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.SnackBarData
+import com.iqbalwork.ramadhancamp.shared.common.ui.components.snackbar.RamadhanSnackBarProps
+import com.iqbalwork.ramadhancamp.shared.common.ui.utils.TextResource
 import com.iqbalwork.ramadhancamp.shared.common.utils.ShareManager
 import com.iqbalwork.ramadhancamp.shared.utils.TAG_BOOKMARK_FTS
 import io.github.aakira.napier.Napier
@@ -134,12 +137,16 @@ class QuranSheetViewModel(
                     append(params.teksIndonesia)
                 }
                 sendEffect(QuranSheetEffect.CopyToClipboard(copyText))
+                showSnackBar(
+                    SnackBarData(
+                        message = TextResource.PlainText("Ayat berhasil disalin"),
+                        durationMillis = RamadhanSnackBarProps.Duration.Short,
+                        position = RamadhanSnackBarProps.Position.Top
+                    )
+                )
             }
             is QuranSheetEvent.Dismiss -> {
                 navigationManager.back()
-            }
-            is QuranSheetEvent.BookmarkSuccessHandled -> {
-                updateState { copy(bookmarkMessage = null) }
             }
             is QuranSheetEvent.OpenPlaylistPicker -> {
                 updateState { copy(step = SheetStep.PlaylistPicker) }
