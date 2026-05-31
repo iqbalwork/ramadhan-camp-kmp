@@ -22,22 +22,18 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Add
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Search
 import com.iqbalwork.ramadhancamp.shared.common.ui.components.dialog.RamadhanAlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -48,6 +44,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.iqbalwork.ramadhancamp.feature.bookmark.presentation.components.BookmarkCard
@@ -155,15 +152,6 @@ fun BookmarkContent(
                                 exit = fadeOut()
                             ),
                             title = { Text("Ayat Favorit", style = typography.headlineSmall, color = colors.textPrimary) },
-                            navigationIcon = {
-                                IconButton(onClick = { action(BookmarkEvent.OnBackClicked) }) {
-                                    Icon(
-                                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                                        contentDescription = "Back",
-                                        tint = colors.textPrimary
-                                    )
-                                }
-                            },
                             actions = {
                                 IconButton(onClick = { action(BookmarkEvent.OnSearchClicked) }) {
                                     Icon(
@@ -238,7 +226,7 @@ fun BookmarkContent(
                                 )
                                 Spacer(modifier = Modifier.height(16.dp))
                                 Text(
-                                    text = "Tidak ada hasil untuk \"\"",
+                                    text = "Tidak ada hasil untuk \"${state.searchQuery}\"",
                                     style = typography.bodyLarge,
                                     color = colors.textSecondary
                                 )
@@ -247,6 +235,44 @@ fun BookmarkContent(
                                     text = "Coba kata kunci lain",
                                     style = typography.labelSmall,
                                     color = colors.textMuted
+                                )
+                            }
+                        }
+                    } else if (state.bookmarks.isEmpty()) {
+                        // Empty bookmarks
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Column(
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Outlined.BookmarkBorder,
+                                    contentDescription = null,
+                                    tint = colors.textMuted,
+                                    modifier = Modifier.size(64.dp)
+                                )
+                                Spacer(modifier = Modifier.height(16.dp))
+                                Text(
+                                    text = "Belum Ada Bookmark",
+                                    style = typography.headlineSmall,
+                                    color = colors.textSecondary
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Simpan ayat-ayat favorit dari Al-Quran untuk dibaca kembali nanti.",
+                                    style = typography.bodyLarge,
+                                    color = colors.textMuted,
+                                    textAlign = TextAlign.Center
+                                )
+                                Spacer(modifier = Modifier.height(24.dp))
+                                RamadhanButton(
+                                    variant = RamadhanButtonProps.Variant.Primary,
+                                    text = "Buka Al-Quran",
+                                    onClick = { action(BookmarkEvent.NavigateToQuran) },
+                                    modifier = Modifier.fillMaxWidth(0.6f)
                                 )
                             }
                         }

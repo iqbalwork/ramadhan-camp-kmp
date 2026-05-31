@@ -18,4 +18,5 @@ sealed interface BookmarkEvent : UiEvent {
     data object ConfirmDeleteCategory : BookmarkEvent
     data object DismissDeleteCategory : BookmarkEvent
     data object OnSearchCloseClicked : BookmarkEvent
+    data object NavigateToQuran : BookmarkEvent
 }

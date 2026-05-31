@@ -161,6 +161,9 @@ class BookmarkViewModel(
                 updateState { copy(searchQuery = "", isSearchActive = false) }
                 searchQueryFlow.value = ""
             }
+            is BookmarkEvent.NavigateToQuran -> {
+                navigationManager.switchTab(QuranTab)
+            }
         }
     }
 }
