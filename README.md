@@ -74,7 +74,7 @@ A date picker lets you check past or future schedules at a glance.
 <details>
 <summary>🎬 Watch Adzan Notification Demo</summary>
 
-<video src="docs/assets/videos/pray_time_notif.webm" autoplay loop muted playsinline width="280"></video>
+[pray_time_notif.webm](https://github.com/user-attachments/assets/8e01267b-9008-4b00-b302-9bf759166f63)
 
 </details>
 
@@ -118,7 +118,7 @@ Saved ayats show a **"Tersimpan di bookmark"** badge.
 <details>
 <summary>🎬 Watch Ayat Share Demo</summary>
 
-<video src="docs/assets/videos/quran_ayat_share.mp4" autoplay loop muted playsinline width="280"></video>
+https://github.com/user-attachments/assets/1e6df25b-4dc1-4b5c-9ac1-c70238f3f325
 
 </details>
 
@@ -138,7 +138,7 @@ The floating audio player bar shows the **Now Playing** surah and ayat, reciter 
 <details>
 <summary>🎬 Watch Audio Playback Demo</summary>
 
-<video src="docs/assets/videos/quran_audio_playback.webm" autoplay loop muted playsinline width="280"></video>
+[quran_audio_playback.webm](https://github.com/user-attachments/assets/0e72aa78-bb02-4e64-b1e7-d6ea1043b45d)
 
 </details>
 
@@ -156,7 +156,7 @@ Your current city is displayed as a chip, along with the precise bearing degree 
 <details>
 <summary>🎬 Watch Compass Rotation Demo</summary>
 
-<video src="docs/assets/videos/qibla_compass_rotation.mp4" autoplay loop muted playsinline width="280"></video>
+https://github.com/user-attachments/assets/bbe471a0-b8b0-40bb-a451-d903eaf8e2e8
 
 </details>
 
@@ -191,7 +191,7 @@ The **"Ayat Favorit"** tab organizes your saved ayats with:
 <details>
 <summary>🎬 Watch Bookmark Navigation & Copy Demo</summary>
 
-<video src="docs/assets/videos/quran_bookmark_nav_and_copy_ayat.mp4" autoplay loop muted playsinline width="280"></video>
+https://github.com/user-attachments/assets/1998c88c-72e4-4d15-8a86-91cf93101a8a
 
 </details>
 
