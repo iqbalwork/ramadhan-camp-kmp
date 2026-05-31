@@ -51,7 +51,7 @@ The Home tab greets you with **"Assalamualaikum!"** alongside your current city 
 A prominent prayer countdown card shows the next prayer with remaining time and a mosque illustration.
 Quick-access **"Surah Populer"** carousel highlights Al-Kahf, Yasin, and Al-Mulk.
 **"Terakhir Dibaca"** picks up right where you left off.
-A search box lets you find any ayat or surah instantly — **"Cari Ayat atau Surah..."**.
+A search box lets you find any ayat or surah instantly: **"Cari Ayat atau Surah..."**.
 
 <p align="center">
   <img src="docs/assets/screenshots/home_location_picker.png" alt="Location Picker" width="260" />
@@ -108,10 +108,10 @@ Tap a surah to reveal per-ayat cards featuring **Arabic text in the LPMQ IsepMis
 </table>
 
 The **ayat bottom sheet** (_Pilihan Ayat_) gives you instant access to:
-- ▶️ **Play Audio** — stream recitation with a full playback bar
-- 🔖 **Bookmark** — save to a playlist/category
-- 🔗 **Share** — share the ayat text
-- 📋 **Copy** — copy to clipboard
+- ▶️ **Play Audio** stream recitation with a full playback bar
+- 🔖 **Bookmark** save to a playlist/category
+- 🔗 **Share** share the ayat text
+- 📋 **Copy** copy to clipboard
 
 Saved ayats show a **"Tersimpan di bookmark"** badge.
 
@@ -214,16 +214,16 @@ ramadhancamp://quran/{surahId}/{ayatNumber} → Open specific ayat
 
 | Swatch | Hex | Usage |
 |:------:|:---:|:------|
-| 🟫 | `#10221D` | **bgPrimary** — main background |
-| 🟫 | `#1A2E28` | **bgSecondary** — card background |
-| 🟩 | `#064C39` | **bgSurface** — elevated surfaces |
-| 🟢 | `#4ADE80` | **accentPrimary** — highlights, active states |
-| 🟡 | `#D4AF37` | **accentGold** — surah badges, Kaaba pointer |
-| ⬜ | `100% white` | **textPrimary** — main text |
-| ⬜ | `80% white` | **textSecondary** — secondary text |
-| ⬜ | `40% white` | **textMuted** — muted/hint text |
-| ⬛ | `dark text` | **textOnLight** — text on accent backgrounds |
-| ⬜ | `10% white` | **divider** — separator lines |
+| 🟫 | `#10221D` | **bgPrimary** main background |
+| 🟫 | `#1A2E28` | **bgSecondary** card background |
+| 🟩 | `#064C39` | **bgSurface** elevated surfaces |
+| 🟢 | `#4ADE80` | **accentPrimary** highlights, active states |
+| 🟡 | `#D4AF37` | **accentGold** surah badges, Kaaba pointer |
+| ⬜ | `100% white` | **textPrimary** main text |
+| ⬜ | `80% white` | **textSecondary** secondary text |
+| ⬜ | `40% white` | **textMuted** muted/hint text |
+| ⬛ | `dark text` | **textOnLight** text on accent backgrounds |
+| ⬜ | `10% white` | **divider** separator lines |
 
 ### Typography
 
@@ -241,21 +241,37 @@ All text — including Quran ayat — uses **LPMQ IsepMisbah**, ensuring consist
 
 ## 🛠 Tech Stack
 
-| Technology | Version | Purpose |
-|:-----------|:-------:|:--------|
-| Kotlin | 2.3.0 | Language |
-| Compose Multiplatform | 1.10.0 | Shared UI framework |
-| Navigation3 | 1.0.0-alpha05 | In-app navigation |
-| Ktor | 3.4.0 | HTTP client & API calls |
-| Koin | 4.1.1 | Dependency injection |
-| Coil | 3.4.0 | Image loading |
-| Kotlinx Serialization | 1.10.0 | JSON parsing |
-| Kotlinx Coroutines | 1.10.2 | Async programming |
-| AGP | 9.0.1 | Android build |
-| Android minSdk / compileSdk | 27 / 36 | Android targets |
-| iOS deployment target | 18.2 | iOS targets |
+I've used a carefully chosen set of modern libraries and tools to deliver a robust cross platform experience.
 
-**API**: [eQuran.id](https://equran.id/api/) — Quran text, surah metadata, and prayer schedules.
+| Library | Version | Purpose |
+|:---|:---:|:---|
+| Kotlin | 2.3.0 | Programming language |
+| Compose Multiplatform | 1.10.0 | Shared user interface framework |
+| Navigation3 | 1.0.0 alpha05 | Handling screen transitions and deep links |
+| Ktor | 3.4.0 | Network client for reliable API communication |
+| Koin | 4.1.1 | Dependency injection |
+| Coil | 3.4.0 | Fast image loading |
+| Kotlinx Serialization | 1.10.0 | Parsing JSON data |
+| Kotlinx Coroutines | 1.10.2 | Managing background tasks asynchronously |
+| Kotlinx Datetime | 0.7.1 | Working with dates and times across platforms |
+| Room | 2.8.4 | Storing structured data locally |
+| SQLite Bundled | 2.6.2 | Core database engine |
+| SQLDelight | 2.2.1 | Type safe SQL operations |
+| Multiplatform Settings| 1.3.0 | Saving simple key value preferences |
+| Compass | 3.0.1 | Geocoding and geolocation for accurate prayer times |
+| Alarmee | 2.6.0 | Scheduling local notifications and alarms |
+| MOKO Permissions | 0.20.1 | Requesting device permissions seamlessly |
+| CMP Media Player | 1.0.53 | Playing audio streams |
+| Napier | 2.7.1 | Unified logging for easier debugging |
+| Inspektify Ktor 3 | 1.0.0 beta10 | Inspecting network traffic |
+| BuildKonfig | 0.17.1 | Passing build time configurations |
+| Kotlin Parcelize | 2.3.10 | Easy object serialization on Android |
+| ConstraintLayout | 0.6.1 | Complex UI layouts in Compose |
+| AGP | 9.0.1 | Android Gradle build system |
+| Android minSdk and compileSdk | 27 and 36 | Android platform targets |
+| iOS deployment target | 18.2 | Minimum iOS requirement |
+
+**API**: [eQuran.id](https://equran.id/) for Quran text, surah metadata, and prayer schedules.
 
 ---
 
@@ -375,10 +391,10 @@ ramadhan/
 
 ## 🙏 Acknowledgments
 
-- **[eQuran.id](https://equran.id/)** — Free Quran API providing surah data, ayat translations, and prayer schedules
-- **LPMQ IsepMisbah** — Beautiful Arabic font for Quran text rendering
-- **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)** — Shared logic across platforms
-- **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)** — Shared UI across platforms
+- **[eQuran.id](https://equran.id/)** Free Quran API providing surah data, ayat translations, and prayer schedules
+- **LPMQ IsepMisbah** Beautiful Arabic font for Quran text rendering
+- **[Kotlin Multiplatform](https://kotlinlang.org/docs/multiplatform.html)** Shared logic across platforms
+- **[Compose Multiplatform](https://www.jetbrains.com/lp/compose-multiplatform/)** Shared UI across platforms
 
 ---
 
