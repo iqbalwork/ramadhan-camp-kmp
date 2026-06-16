@@ -1,0 +1,54 @@
+<resources>
+    <string name="retry">Coba Lagi</string>
+    <string name="open_app_settings">Buka Pengaturan Aplikasi</string>
+
+    <string name="error_critical_title">Ada sesuatu yang rusak</string>
+    <string name="error_critical_message">Tunggu sebentar dan coba lagi</string>
+    <string name="error_critical_snack_bar">Ada sesuatu yang rusak. Tunggu sebentar dan coba lagi</string>
+    <string name="error_network_title">Ada yang tidak beres</string>
+    <string name="error_network_message">Periksa internet atau coba lagi</string>
+    <string name="error_network_snack_bar">Ada yang tidak beres. Periksa internet atau coba lagi</string>
+
+    <string name="error_location_title">Gagal mendapatkan lokasi terkini</string>
+    <string name="error_location_message">Periksa izin lokasi atau coba lagi</string>
+    <string name="error_location_not_supported_message">Perangkat tidak mendukung geolokasi</string>
+    <string name="error_location_not_found_message">Tidak ada lokasi yang ditemukan berdasarkan koordinat pengguna</string>
+    <string name="error_location_permission_denied_title">Izin Lokasi Tepat Diperlukan</string>
+    <string name="error_location_permission_denied_message">Jadwal shalat berbeda tiap kota. Agar jadwal akurat, aktifkan izin Lokasi Tepat (Precise Location). Ketuk tombol di bawah untuk membuka Informasi Aplikasi, lalu pilih Izin → Lokasi → Izinkan.</string>
+
+    <string name="home_main_header_greeting">Assalamualaikum!</string>
+
+    <string name="next">Berikutnya</string>
+    <string name="remaining_time">SISA WAKTU</string>
+    <string name="back">Kembali</string>
+    <string name="pick_province">PILIH PROVINSI</string>
+    <string name="pick_city">PILIH KAB/KOTA</string>
+    <string name="confirm_location">Konfirmasi Lokasi</string>
+    <string name="pick_location">Pilih Lokasi</string>
+    <string name="find_ayat">Cari Ayat atau Surah...</string>
+    <string name="last_read">Terakhir Dibaca</string>
+    <string name="ayat_number">Ayat %1$d</string>
+    <string name="populer_surah">Surah Populer</string>
+    <string name="total_ayahs">%1$d Ayat</string>
+    <string name="shalat_schedule_not_avail">Jadwal Shalat Tidak Tersedia</string>
+    <string name="set_location_in_home_tab">Tolong Pilih Lokasi Anda Di Beranda Agar Jadwal Shalat Tersedia</string>
+    <string name="pray_notification_body">Waktunya untuk salat %1$s</string>
+    <string name="next_shalat_schedule">BERIKUTNYA</string>
+    <string name="next_uppercase">BERIKUTNYA</string>
+    <string name="pilih">Pilih</string>
+    <string name="batal">Batal</string>
+
+    <string name="about_title">Tentang</string>
+    <string name="about_content_description">Tentang</string>
+    <string name="about_app_name">RamadhanCamp</string>
+    <string name="about_version">Versi %1$s</string>
+    <string name="about_copyright">© 2026 Alexius Andrianno Alfa Renanta</string>
+    <string name="about_license">CC BY-NC-ND 4.0</string>
+    <string name="about_equran_attribution">Data shalat disediakan oleh eQuran.id</string>
+    <string name="about_oss_licenses">Lisensi Open Source</string>
+    <string name="oss_licenses_title">Lisensi Open Source</string>
+    <string name="oss_licenses_by">oleh %1$s</string>
+    <string name="error_notification_permission_denied_title">Izin Notifikasi Diperlukan</string>
+    <string name="error_notification_permission_denied_message">Aktifkan izin notifikasi untuk mendapatkan pengingat waktu sholat tepat waktu.</string>
+
+</resources>

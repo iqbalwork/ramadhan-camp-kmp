@@ -1,49 +1,44 @@
 package com.iqbalwork.ramadhancamp
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.safeContentPadding
-import androidx.compose.material3.Button
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
-
-import ramadhancamp.composeapp.generated.resources.Res
-import ramadhancamp.composeapp.generated.resources.compose_multiplatform
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import com.iqbalwork.ramadhancamp.core.domain.model.StartScreen
+import com.iqbalwork.ramadhancamp.core.presentation.mapper.toRootDestination
+import com.iqbalwork.ramadhancamp.feature.auth.presentation.AuthScreen
+import com.iqbalwork.ramadhancamp.feature.main.presentation.MainScreen
+import com.iqbalwork.ramadhancamp.shared.common.navigation.LocalBackStackNode
+import com.iqbalwork.ramadhancamp.shared.common.navigation.RootDestination
+import com.iqbalwork.ramadhancamp.shared.common.navigation.rememberRootBackStack
+import com.iqbalwork.ramadhancamp.shared.common.ui.theme.RamadhanTheme
 
 @Composable
-@Preview
-fun App() {
-    MaterialTheme {
-        var showContent by remember { mutableStateOf(false) }
-        Column(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.primaryContainer)
-                .safeContentPadding()
-                .fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-            Button(onClick = { showContent = !showContent }) {
-                Text("Click me!")
-            }
-            AnimatedVisibility(showContent) {
-                val greeting = remember { Greeting().greet() }
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Image(painterResource(Res.drawable.compose_multiplatform), null)
-                    Text("Compose: $greeting")
-                }
-            }
+fun App(
+    startScreen: StartScreen = StartScreen.Main,
+) {
+    RamadhanTheme {
+        val backStackNode = rememberRootBackStack(startScreen.toRootDestination(), "APP")
+
+        CompositionLocalProvider(LocalBackStackNode provides backStackNode) {
+            NavDisplay(
+                backStack = backStackNode.backStack,
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
+                transitionSpec    = { slideInHorizontally { it }  togetherWith slideOutHorizontally { -it } },
+                popTransitionSpec = { slideInHorizontally { -it } togetherWith slideOutHorizontally { it } },
+                entryProvider = entryProvider {
+                    entry<RootDestination.Auth> { AuthScreen() }
+                    entry<RootDestination.Main> { dest -> MainScreen(dest.initialTab) }
+                },
+            )
         }
     }
 }

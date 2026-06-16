@@ -59,6 +59,8 @@ android {
 
 dependencies {
     implementation(projects.composeApp)
+    implementation(libs.koin.android)
+    implementation(libs.androidx.core.splashscreen)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.testExt.junit)

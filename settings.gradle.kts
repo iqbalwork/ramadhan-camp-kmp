@@ -33,4 +33,7 @@ plugins {
 }
 
 include(":composeApp")
+include(":core:data")
+include(":core:uikit")
 include(":androidApp")
+include(":shared")

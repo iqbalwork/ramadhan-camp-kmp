@@ -1,6 +1,6 @@
 TEAM_ID=
 
-PRODUCT_NAME=RamadhanCamp
+PRODUCT_NAME=MuslimPath
 PRODUCT_BUNDLE_IDENTIFIER=com.iqbalwork.ramadhancamp.RamadhanCamp$(TEAM_ID)
 
 CURRENT_PROJECT_VERSION=1
